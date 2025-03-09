@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers Dashboard - Weekly Forecast</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Teachers Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">🏠</span>
+                Home
+            </a>
+            <a href="weekly-forecast.html" class="nav-link active">
+                <span class="nav-icon">📅</span>
+                Weekly Forecast
+            </a>
+            <a href="weekly-activities.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                Weekly Activities
+            </a>
+            <a href="office-response.html" class="nav-link">
+                <span class="nav-icon">📬</span>
+                Office Response
+            </a>
+        </nav>
+    </div>
+    <div class="content">
+        <div id="weekly-forecast" class="page">
+            <div class="page-header">
+                <h1>🌤️ Weekly Forecast</h1>
+            </div>
+            <div class="class-selection">
+                <div class="selection-group">
+                    <span class="class-label">SELECT CLASS:</span>
+                    <select id="class-select" class="form-select">
+                        <option value="">Select Class</option>
+                        <option value="CRECHE">CRECHE</option>
+                        <option value="NURSERY">NURSERY</option>
+                        <option value="KG1">KG1</option>
+                        <option value="KG2">KG2</option>
+                        <option value="CLASS 1">CLASS 1</option>
+                        <option value="CLASS 2">CLASS 2</option>
+                        <option value="CLASS 3">CLASS 3</option>
+                        <option value="CLASS 4">CLASS 4</option>
+                        <option value="CLASS 5">CLASS 5</option>
+                        <option value="CLASS 6">CLASS 6</option>
+                        <option value="CLASS 7">CLASS 7</option>
+                        <option value="CLASS 8">CLASS 8</option>
+                        <option value="CLASS 9">CLASS 9</option>
+                    </select>
+                </div>
+                <div class="selection-group">
+                    <span class="class-label">SELECT SECTION:</span>
+                    <select id="section-select" class="form-select">
+                        <option value="">Select Section</option>
+                        <option value="SINGLE">SINGLE STREAM</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                        <option value="D">Section D</option>
+                    </select>
+                </div>
+            </div>
+            <div class="selected-class"></div>
+            <div class="add-forecast">
+                <select id="assignment-week" class="form-select">
+                    <option value="">Select Week</option>
+                    <option value="Week 1">Week 1</option>
+                    <option value="Week 2">Week 2</option>
+                    <option value="Week 3">Week 3</option>
+                    <option value="Week 4">Week 4</option>
+                    <option value="Week 5">Week 5</option>
+                    <option value="Week 6">Week 6</option>
+                    <option value="Week 7">Week 7</option>
+                    <option value="Week 8">Week 8</option>
+                    <option value="Week 9">Week 9</option>
+                    <option value="Week 10">Week 10</option>
+                    <option value="Week 11">Week 11</option>
+                    <option value="Week 12">Week 12</option>
+                    <option value="Week 13">Week 13</option>
+                    <option value="Week 14">Week 14</option>
+                    <option value="Week 15">Week 15</option>
+                    <option value="Week 16">Week 16</option>
+                    <option value="Week 17">Week 17</option>
+                    <option value="Week 18">Week 18</option>
+                    <option value="Week 19">Week 19</option>
+                    <option value="Week 20">Week 20</option>
+                </select>
+                <input type="text" id="assignment-subject" placeholder="Subject">
+                <input type="text" id="assignment-topic" placeholder="Topic">
+                <input type="text" id="assignment-subtopic" placeholder="Sub-topic">
+                <input type="text" id="assignment-material" placeholder="Teacher Learner Material">
+                <input type="date" id="assignment-date" placeholder="mm/dd/yyyy">
+                <button onclick="addAssignment()" class="primary-btn">Add Forecast</button>
+            </div>
+            <div id="assignment-status" class="status-message"></div>
+            <table id="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Weeks</th>
+                        <th>Subject</th>
+                        <th>Topic</th>
+                        <th>Sub-topic</th>
+                        <th>Teacher Learner Material</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Week 1</td>
+                        <td>Math</td>
+                        <td>Algebra</td>
+                        <td>Linear Equations</td>
+                        <td>Textbook Ch.3</td>
+                        <td>2025-02-25</td>
+                        <td>Incomplete</td>
+                    </tr>
+                    <tr>
+                        <td>Week 2</td>
+                        <td>Science</td>
+                        <td>Physics</td>
+                        <td>Newton's Laws</td>
+                        <td>Lab Equipment</td>
+                        <td>2025-03-01</td>
+                        <td>Complete</td>
+                    </tr>
+                    <tr>
+                        <td>Week 3</td>
+                        <td>History</td>
+                        <td>World War II</td>
+                        <td>Pacific Theater</td>
+                        <td>Maps & Documents</td>
+                        <td>2025-02-28</td>
+                        <td>Incomplete</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="submit-section">
+                <button onclick="submitForecastData()" class="submit-btn" disabled>
+                    <span class="submit-icon">📤</span>
+                    Submit Forecast Data
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers Dashboard - Office Response</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Teachers Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">🏠</span>
+                Home
+            </a>
+            <a href="weekly-forecast.html" class="nav-link">
+                <span class="nav-icon">📅</span>
+                Weekly Forecast
+            </a>
+            <a href="weekly-activities.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                Weekly Activities
+            </a>
+            <a href="office-response.html" class="nav-link active">
+                <span class="nav-icon">📬</span>
+                Office Response
+            </a>
+        </nav>
+    </div>
+    <div class="content">
+        <div id="office-response" class="page">
+            <div class="page-header">
+                <h1>📋 Admin Review & Feedback</h1>
+            </div>
+            
+            <!-- Class Selection -->
+            <div class="class-selection">
+                <div class="selection-group">
+                    <span class="class-label">SELECT CLASS:</span>
+                    <select id="class-select" class="form-select">
+                        <option value="">Select Class</option>
+                        <option value="CRECHE">CRECHE</option>
+                        <option value="NURSERY">NURSERY</option>
+                        <option value="KG1">KG1</option>
+                        <option value="KG2">KG2</option>
+                        <option value="CLASS 1">CLASS 1</option>
+                        <option value="CLASS 2">CLASS 2</option>
+                        <option value="CLASS 3">CLASS 3</option>
+                        <option value="CLASS 4">CLASS 4</option>
+                        <option value="CLASS 5">CLASS 5</option>
+                        <option value="CLASS 6">CLASS 6</option>
+                        <option value="CLASS 7">CLASS 7</option>
+                        <option value="CLASS 8">CLASS 8</option>
+                        <option value="CLASS 9">CLASS 9</option>
+                    </select>
+                </div>
+                <div class="selection-group">
+                    <span class="class-label">SELECT SECTION:</span>
+                    <select id="section-select" class="form-select">
+                        <option value="">Select Section</option>
+                        <option value="SINGLE">SINGLE STREAM</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                        <option value="D">Section D</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tabs for Weekly Forecast and Activities -->
+            <div class="response-tabs">
+                <button class="tab-btn active" onclick="showTab('forecast-responses')">Weekly Forecasts</button>
+                <button class="tab-btn" onclick="showTab('activity-responses')">Weekly Activities</button>
+            </div>
+
+            <!-- Weekly Forecasts Responses -->
+            <div id="forecast-responses" class="response-section">
+                <h2>Weekly Forecast Reviews</h2>
+                <table class="response-table">
+                    <thead>
+                        <tr>
+                            <th>Week</th>
+                            <th>Subject</th>
+                            <th>Submission Date</th>
+                            <th>Review Status</th>
+                            <th>Rating</th>
+                            <th>Admin Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody id="forecast-responses-body">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Weekly Activities Responses -->
+            <div id="activity-responses" class="response-section" style="display: none;">
+                <h2>Weekly Activities Reviews</h2>
+                <table class="response-table">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Topic</th>
+                            <th>Submission Date</th>
+                            <th>Review Status</th>
+                            <th>Rating</th>
+                            <th>Admin Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody id="activity-responses-body">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

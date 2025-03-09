@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Settings</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                Dashboard
+            </a>
+            <a href="review-forecasts.html" class="nav-link">
+                <span class="nav-icon">📋</span>
+                Review Forecasts
+            </a>
+            <a href="review-activities.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                Review Activities
+            </a>
+            <a href="settings.html" class="nav-link active">
+                <span class="nav-icon">⚙️</span>
+                Settings
+            </a>
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="title-icon">⚙️</span>
+                    Admin Settings
+                </h1>
+            </div>
+
+            <!-- General Settings -->
+            <div class="card settings-section">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="title-icon">👤</span>
+                        General Settings
+                    </h2>
+                </div>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label class="form-label" for="admin-name">Admin Name</label>
+                        <input type="text" id="admin-name" class="form-control" placeholder="Enter admin name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="admin-email">Email Address</label>
+                        <input type="email" id="admin-email" class="form-control" placeholder="Enter email address">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="notification-preference">Notification Preferences</label>
+                        <select id="notification-preference" class="form-control">
+                            <option value="all">All Notifications</option>
+                            <option value="important">Important Only</option>
+                            <option value="none">No Notifications</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Settings -->
+            <div class="card settings-section">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="title-icon">📋</span>
+                        Review Settings
+                    </h2>
+                </div>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label class="form-label" for="default-rating">Default Rating</label>
+                        <select id="default-rating" class="form-control">
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="feedback-template">Default Feedback Template</label>
+                        <textarea id="feedback-template" class="form-control" placeholder="Enter default feedback template"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Settings -->
+            <div class="card settings-section">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="title-icon">🎨</span>
+                        Display Settings
+                    </h2>
+                </div>
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label class="form-label" for="items-per-page">Items Per Page</label>
+                        <select id="items-per-page" class="form-control">
+                            <option value="10">10 Items</option>
+                            <option value="20">20 Items</option>
+                            <option value="50">50 Items</option>
+                            <option value="100">100 Items</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="show-completed" class="form-checkbox">
+                            Show Completed Reviews
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="settings-actions">
+                <button id="save-settings" class="btn btn-primary">
+                    <span class="btn-icon">💾</span>
+                    Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../api.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html> 

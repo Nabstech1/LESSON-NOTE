@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Review Activities</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                Dashboard
+            </a>
+            <a href="review-forecasts.html" class="nav-link">
+                <span class="nav-icon">📋</span>
+                Review Forecasts
+            </a>
+            <a href="review-activities.html" class="nav-link active">
+                <span class="nav-icon">📝</span>
+                Review Activities
+            </a>
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙️</span>
+                Settings
+            </a>
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="title-icon">📝</span>
+                    Review Weekly Activities
+                </h1>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="class-filter">Class:</label>
+                    <select id="class-filter" class="filter-select">
+                        <option value="">All Classes</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="section-filter">Section:</label>
+                    <select id="section-filter" class="filter-select">
+                        <option value="">All Sections</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="day-filter">Day:</label>
+                    <select id="day-filter" class="filter-select">
+                        <option value="">All Days</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="status-filter">Status:</label>
+                    <select id="status-filter" class="filter-select">
+                        <option value="">All Status</option>
+                        <option value="pending">Pending Review</option>
+                        <option value="reviewed">Reviewed</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter Stats -->
+            <div class="filter-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Total:</span>
+                    <span id="total-count" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Pending:</span>
+                    <span id="pending-count" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Reviewed:</span>
+                    <span id="reviewed-count" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <!-- Activities Table -->
+            <div class="card table-card">
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Topic</th>
+                                <th>R.P.K</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activities-table-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Review Activity</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Activity Details -->
+                <div class="review-details">
+                    <div class="detail-group">
+                        <label>Class:</label>
+                        <span id="modal-class"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Section:</label>
+                        <span id="modal-section"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Day:</label>
+                        <span id="modal-day"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Topic:</label>
+                        <span id="modal-topic"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Sub-topic:</label>
+                        <span id="modal-subtopic"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>R.P.K:</label>
+                        <span id="modal-rpk"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Objectives:</label>
+                        <span id="modal-objectives"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Material:</label>
+                        <span id="modal-material"></span>
+                    </div>
+                </div>
+
+                <!-- Review Form -->
+                <div class="review-form">
+                    <div class="form-group">
+                        <label for="rating">Rating:</label>
+                        <div class="rating-input">
+                            <input type="number" id="rating" min="1" max="5" value="5">
+                            <span class="rating-max">/5</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback">Feedback:</label>
+                        <textarea id="feedback" rows="4" placeholder="Enter your feedback..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="submit-btn" onclick="submitReview()">Submit Review</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../api.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html> 

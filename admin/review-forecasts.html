@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Review Forecasts</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                Dashboard
+            </a>
+            <a href="review-forecasts.html" class="nav-link active">
+                <span class="nav-icon">📋</span>
+                Review Forecasts
+            </a>
+            <a href="review-activities.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                Review Activities
+            </a>
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙️</span>
+                Settings
+            </a>
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="title-icon">📋</span>
+                    Review Weekly Forecasts
+                </h1>
+            </div>
+
+            <!-- Filters Section -->
+            <div class="card filters-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span class="title-icon">🔍</span>
+                        Filter Forecasts
+                    </h3>
+                </div>
+                <div class="filters-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="class-filter">Class</label>
+                        <select id="class-filter" class="form-control">
+                            <option value="">All Classes</option>
+                            <option value="CRECHE">CRECHE</option>
+                            <option value="NURSERY">NURSERY</option>
+                            <option value="KG1">KG1</option>
+                            <option value="KG2">KG2</option>
+                            <option value="CLASS 1">CLASS 1</option>
+                            <option value="CLASS 2">CLASS 2</option>
+                            <option value="CLASS 3">CLASS 3</option>
+                            <option value="CLASS 4">CLASS 4</option>
+                            <option value="CLASS 5">CLASS 5</option>
+                            <option value="CLASS 6">CLASS 6</option>
+                            <option value="CLASS 7">CLASS 7</option>
+                            <option value="CLASS 8">CLASS 8</option>
+                            <option value="CLASS 9">CLASS 9</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="section-filter">Section</label>
+                        <select id="section-filter" class="form-control">
+                            <option value="">All Sections</option>
+                            <option value="SINGLE">SINGLE STREAM</option>
+                            <option value="A">Section A</option>
+                            <option value="B">Section B</option>
+                            <option value="C">Section C</option>
+                            <option value="D">Section D</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="status-filter">Status</label>
+                        <select id="status-filter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending Review</option>
+                            <option value="reviewed">Reviewed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="week-filter">Week</label>
+                        <select id="week-filter" class="form-control">
+                            <option value="">All Weeks</option>
+                            <!-- Will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Forecasts Table -->
+            <div class="card table-card">
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Week</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Subject</th>
+                                <th>Topic</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="forecasts-table-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Review Forecast</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Forecast Details -->
+                <div class="review-details">
+                    <div class="detail-group">
+                        <label>Class:</label>
+                        <span id="modal-class"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Section:</label>
+                        <span id="modal-section"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Week:</label>
+                        <span id="modal-day"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Topic:</label>
+                        <span id="modal-topic"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Sub-topic:</label>
+                        <span id="modal-subtopic"></span>
+                    </div>
+                    <div class="detail-group">
+                        <label>Material:</label>
+                        <span id="modal-material"></span>
+                    </div>
+                </div>
+
+                <!-- Review Form -->
+                <div class="review-form">
+                    <div class="form-group">
+                        <label for="rating">Rating:</label>
+                        <div class="rating-input">
+                            <input type="number" id="rating" min="1" max="5" value="5">
+                            <span class="rating-max">/5</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback">Feedback:</label>
+                        <textarea id="feedback" rows="4" placeholder="Enter your feedback..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="submit-btn" onclick="submitReview()">Submit Review</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../api.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html> 

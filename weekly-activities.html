@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers Dashboard - Weekly Activities</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Teachers Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">🏠</span>
+                Home
+            </a>
+            <a href="weekly-forecast.html" class="nav-link">
+                <span class="nav-icon">📅</span>
+                Weekly Forecast
+            </a>
+            <a href="weekly-activities.html" class="nav-link active">
+                <span class="nav-icon">📝</span>
+                Weekly Activities
+            </a>
+            <a href="office-response.html" class="nav-link">
+                <span class="nav-icon">📬</span>
+                Office Response
+            </a>
+        </nav>
+    </div>
+    <div class="content">
+        <div id="weekly-activities" class="page">
+            <div class="page-header">
+                <h1>📅 Weekly Activities</h1>
+            </div>
+            <div class="class-selection">
+                <div class="selection-group">
+                    <span class="class-label">SELECT CLASS:</span>
+                    <select id="class-select" class="form-select">
+                        <option value="">Select Class</option>
+                        <option value="CRECHE">CRECHE</option>
+                        <option value="NURSERY">NURSERY</option>
+                        <option value="KG1">KG1</option>
+                        <option value="KG2">KG2</option>
+                        <option value="CLASS 1">CLASS 1</option>
+                        <option value="CLASS 2">CLASS 2</option>
+                        <option value="CLASS 3">CLASS 3</option>
+                        <option value="CLASS 4">CLASS 4</option>
+                        <option value="CLASS 5">CLASS 5</option>
+                        <option value="CLASS 6">CLASS 6</option>
+                        <option value="CLASS 7">CLASS 7</option>
+                        <option value="CLASS 8">CLASS 8</option>
+                        <option value="CLASS 9">CLASS 9</option>
+                    </select>
+                </div>
+                <div class="selection-group">
+                    <span class="class-label">SELECT SECTION:</span>
+                    <select id="section-select" class="form-select">
+                        <option value="">Select Section</option>
+                        <option value="SINGLE">SINGLE STREAM</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                        <option value="D">Section D</option>
+                    </select>
+                </div>
+            </div>
+            <div class="selected-class"></div>
+            <div class="add-forecast">
+                <select id="activity-day" class="form-select">
+                    <option value="">Select Day</option>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                </select>
+                <input type="text" id="activity-topic" placeholder="Topic">
+                <input type="text" id="activity-subtopic" placeholder="Sub-topic">
+                <input type="text" id="activity-rpk" placeholder="R.P.K">
+                <input type="text" id="activity-objectives" placeholder="Objectives">
+                <input type="text" id="activity-material" placeholder="Teacher Learner Material">
+                <button id="add-activity" class="primary-btn">Add Activity</button>
+            </div>
+            <div id="assignment-status" class="status-message"></div>
+            <table id="assignments-table">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Topic</th>
+                        <th>Sub-topic</th>
+                        <th>R.P.K</th>
+                        <th>Objectives</th>
+                        <th>Teacher Learner Material</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Monday</td>
+                        <td>Algebra</td>
+                        <td>Linear Equations</td>
+                        <td>Basic arithmetic operations</td>
+                        <td>Solve linear equations</td>
+                        <td>Textbook Ch.3</td>
+                        <td>Incomplete</td>
+                    </tr>
+                    <tr>
+                        <td>Tuesday</td>
+                        <td>Physics</td>
+                        <td>Newton's Laws</td>
+                        <td>Basic motion concepts</td>
+                        <td>Understand force and motion</td>
+                        <td>Lab Equipment</td>
+                        <td>Complete</td>
+                    </tr>
+                    <tr>
+                        <td>Wednesday</td>
+                        <td>World War II</td>
+                        <td>Pacific Theater</td>
+                        <td>World War I outcomes</td>
+                        <td>Analyze Pacific campaigns</td>
+                        <td>Maps & Documents</td>
+                        <td>Incomplete</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="submit-section">
+                <button onclick="submitActivityData()" class="submit-btn" disabled>
+                    <span class="submit-icon">📤</span>
+                    Submit Activity Data
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 

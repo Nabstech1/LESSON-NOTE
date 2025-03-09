@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teachers Dashboard - Home</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Teachers Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link active">
+                <span class="nav-icon">🏠</span>
+                Home
+            </a>
+            <a href="weekly-forecast.html" class="nav-link">
+                <span class="nav-icon">📅</span>
+                Weekly Forecast
+            </a>
+            <a href="weekly-activities.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                Weekly Activities
+            </a>
+            <a href="office-response.html" class="nav-link">
+                <span class="nav-icon">📬</span>
+                Office Response
+            </a>
+        </nav>
+    </div>
+
+    <div class="content">
+        <div id="home" class="page">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="title-icon">👋</span>
+                    Welcome to Your Dashboard
+                </h1>
+            </div>
+
+            <div class="welcome-message">
+                <p>Track your weekly forecast, manage your activities, and submit office responses all in one place.</p>
+            </div>
+
+            <div class="quick-actions">
+                <h2>
+                    <span class="section-icon">⚡</span>
+                    Quick Actions
+                </h2>
+                <div class="action-buttons">
+                    <button onclick="window.location.href='weekly-forecast.html'" class="action-btn">
+                        <span class="btn-icon">📅</span>
+                        <span class="btn-text">Weekly Forecast</span>
+                        <span class="btn-description">View and manage your weekly forecasts</span>
+                    </button>
+                    <button onclick="window.location.href='weekly-activities.html'" class="action-btn">
+                        <span class="btn-icon">📝</span>
+                        <span class="btn-text">Weekly Activities</span>
+                        <span class="btn-description">Track and update your activities</span>
+                    </button>
+                    <button onclick="window.location.href='office-response.html'" class="action-btn">
+                        <span class="btn-icon">📬</span>
+                        <span class="btn-text">Office Response</span>
+                        <span class="btn-description">View feedback and responses</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

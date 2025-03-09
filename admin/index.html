@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link active">
+                <span class="nav-icon">📊</span>
+                Dashboard
+            </a>
+            <a href="review-forecasts.html" class="nav-link">
+                <span class="nav-icon">📋</span>
+                Review Forecasts
+            </a>
+            <a href="review-activities.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                Review Activities
+            </a>
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙️</span>
+                Settings
+            </a>
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="title-icon">👋</span>
+                    Welcome, Administrator
+                </h1>
+            </div>
+
+            <!-- Overview Cards -->
+            <div class="admin-overview">
+                <div class="overview-card">
+                    <h3>
+                        <span class="title-icon">📊</span>
+                        Pending Reviews
+                    </h3>
+                    <div class="card-content">
+                        <span class="count" id="pending-count">0</span>
+                        <span class="label">Total Pending</span>
+                    </div>
+                    <div class="card-footer">
+                        <span id="forecast-pending">0 Forecasts</span>
+                        <span id="activity-pending">0 Activities</span>
+                    </div>
+                </div>
+
+                <div class="overview-card">
+                    <h3>
+                        <span class="title-icon">📅</span>
+                        Reviewed Today
+                    </h3>
+                    <div class="card-content">
+                        <span class="count" id="today-count">0</span>
+                        <span class="label">Submissions</span>
+                    </div>
+                    <div class="card-footer">
+                        <span class="date" id="current-date"></span>
+                    </div>
+                </div>
+
+                <div class="overview-card">
+                    <h3>
+                        <span class="title-icon">⭐</span>
+                        Average Rating
+                    </h3>
+                    <div class="card-content">
+                        <span class="count" id="avg-rating">0.0</span>
+                        <span class="label">Out of 5</span>
+                    </div>
+                    <div class="card-footer">
+                        Based on all reviews
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Submissions -->
+            <div class="card recent-submissions">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="title-icon">📝</span>
+                        Recent Submissions
+                    </h2>
+                </div>
+                
+                <div class="submission-filters">
+                    <div class="form-group">
+                        <label class="form-label" for="class-filter">Class</label>
+                        <select id="class-filter" class="form-control">
+                            <option value="">All Classes</option>
+                            <option value="CRECHE">CRECHE</option>
+                            <option value="NURSERY">NURSERY</option>
+                            <option value="KG1">KG1</option>
+                            <option value="KG2">KG2</option>
+                            <option value="CLASS 1">CLASS 1</option>
+                            <option value="CLASS 2">CLASS 2</option>
+                            <option value="CLASS 3">CLASS 3</option>
+                            <option value="CLASS 4">CLASS 4</option>
+                            <option value="CLASS 5">CLASS 5</option>
+                            <option value="CLASS 6">CLASS 6</option>
+                            <option value="CLASS 7">CLASS 7</option>
+                            <option value="CLASS 8">CLASS 8</option>
+                            <option value="CLASS 9">CLASS 9</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="type-filter">Type</label>
+                        <select id="type-filter" class="form-control">
+                            <option value="">All Types</option>
+                            <option value="forecast">Forecasts</option>
+                            <option value="activity">Activities</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="status-filter">Status</label>
+                        <select id="status-filter" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending Review</option>
+                            <option value="reviewed">Reviewed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Class</th>
+                                <th>Type</th>
+                                <th>Subject/Day</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-submissions-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../api.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html> 
