@@ -384,39 +384,39 @@ async function loadItemDetails(type, id) {
         // Use the correct API functions from the api object
         let item;
         try {
-            item = type === 'activity' 
+            item = type == 'activity' 
                 ? await api.getActivity(id)
                 : await api.getForecast(id);
-                
+
             console.log('Loaded item details:', item);
-            
-            if (!item || typeof item !== 'object') {
-                throw new Error(`${type} not found or invalid response`);
-            }
+
+            // if (!item || typeof item !== 'object') {
+            //     throw new Error(`${type} not found or invalid response`);
+            // }
         } catch (error) {
             console.error('Error fetching item:', error);
             throw error;
         }
 
         // Update modal content with the actual data
-        if (type === 'forecast') {
-            const updatedElements = {
-                'modal-class': item.class_name,
-                'modal-section': item.section,
-                'modal-day': item.week_number,
-                'modal-topic': item.topic,
-                'modal-subtopic': item.subtopic,
-                'modal-material': item.material
-            };
+        // if (type == 'forecast') {
+            // const updatedElements = {
+            //     'modal-class': item.class_name,
+            //     'modal-section': item.section,
+            //     'modal-day': item.week_number,
+            //     'modal-topic': item.topic,
+            //     'modal-subtopic': item.subtopic,
+            //     'modal-material': item.material
+            // };
 
             // Update each element with fallback to 'N/A' only if value is null or undefined
-            Object.entries(updatedElements).forEach(([id, value]) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.textContent = value || 'N/A';
-                }
-            });
-        } else {
+            // Object.entries(updatedElements).forEach(([id, value]) => {
+            //     const element = document.getElementById(id);
+            //     if (element) {
+            //         element.textContent = value || 'N/A';
+            //     }
+            // });
+        // } else {
             // For activities
             const updatedElements = {
                 'modal-class': item.class_name,
@@ -436,7 +436,7 @@ async function loadItemDetails(type, id) {
                     element.textContent = value || 'N/A';
                 }
             });
-        }
+        // }
 
         // If there's an existing review, populate the form
         const ratingInput = document.getElementById('rating');
