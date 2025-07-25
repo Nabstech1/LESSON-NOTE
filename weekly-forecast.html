@@ -3,151 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teachers Dashboard - Weekly Forecast</title>
+    <title>Weekly Forecast</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f7fafc; margin: 0; padding: 0; }
+        .dashboard-layout { display: flex; min-height: 100vh; }
+        .sidebar { background: linear-gradient(180deg, #1a237e, #283593); color: white; width: 250px; height: 100vh; position: fixed; left: 0; top: 0; padding: 24px; box-shadow: 4px 0 10px rgba(0,0,0,0.1); z-index: 100; display: flex; flex-direction: column; }
+        .sidebar h2 { text-align: center; font-size: 1.5em; margin-bottom: 32px; letter-spacing: 1px; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
+        .nav-link { color: #e0e7ef; text-decoration: none; padding: 12px 32px; border-radius: 6px 0 0 6px; font-size: 1.08em; display: flex; align-items: center; gap: 10px; transition: background 0.18s; }
+        .nav-link.active, .nav-link:hover { background: #283593; color: #fff; }
+        .nav-icon { font-size: 1.2em; }
+        .main-content { flex: 1; padding: 0; background: #f7fafc; min-height: 100vh; margin-left: 250px; }
+        .header {
+            display: flex; align-items: center;
+            background: linear-gradient(180deg, #1a237e, #283593);
+            color: #fff;
+            box-shadow: 0 2px 8px #0001;
+            padding: 24px 40px 16px 40px;
+            border-radius: 0 0 16px 16px;
+        }
+        .header .back-btn { background: #e0e7ef; color: #2563eb; border: none; border-radius: 5px; padding: 8px 18px; font-size: 1em; font-weight: 500; cursor: pointer; margin-right: 24px; transition: background 0.2s, color 0.2s; }
+        .header .back-btn:hover { background: #d1d5db; color: #1741a6; }
+        .header-title { font-size: 2em; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+        .container { max-width: 900px; margin: 32px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0002; padding: 40px 36px 32px 36px; }
+        h1 { text-align: center; margin-bottom: 32px; }
+        .form-row { display: flex; gap: 18px; margin-bottom: 24px; }
+        .form-row label { font-weight: 500; margin-right: 8px; }
+        .accordion { border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 18px; background: #f9fafb; }
+        .accordion-header { cursor: pointer; padding: 16px 20px; font-size: 1.1rem; font-weight: 600; background: #e0e7ef; border-radius: 6px 6px 0 0; display: flex; align-items: center; }
+        .accordion-header span { margin-left: auto; font-size: 1.2em; }
+        .accordion-content { display: none; padding: 20px; border-top: 1px solid #e2e8f0; }
+        .accordion.open .accordion-content { display: block; }
+        .question-group { margin-bottom: 18px; }
+        .question-label { font-weight: 500; margin-bottom: 6px; display: block; }
+        .subfields-row { display: flex; gap: 12px; margin-bottom: 8px; }
+        .subfields-row label { font-size: 0.97em; margin-right: 4px; }
+        input[type="text"], input[type="number"], input[type="date"], textarea {
+            padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 1em; width: 180px; }
+        textarea { min-height: 32px; resize: vertical; }
+        .submit-btn { margin: 32px auto 0 auto; display: block; background: #2563eb; color: #fff; border: none; border-radius: 5px; padding: 12px 36px; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .submit-btn:hover { background: #1741a6; }
+        .status-message { text-align: center; margin-top: 18px; font-weight: 500; }
+        .sidebar-logo {
+            display: block;
+            margin: 0 auto 18px auto;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #0002;
+            background: #fff;
+        }
+        .header-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 18px;
+            background: #fff;
+        }
+    </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Teachers Dashboard</h2>
-        <nav class="sidebar-nav">
-            <a href="index.html" class="nav-link">
-                <span class="nav-icon">🏠</span>
-                Home
-            </a>
-            <a href="weekly-forecast.html" class="nav-link active">
-                <span class="nav-icon">📅</span>
-                Weekly Forecast
-            </a>
-            <a href="weekly-activities.html" class="nav-link">
-                <span class="nav-icon">📝</span>
-                Weekly Activities
-            </a>
-            <a href="office-response.html" class="nav-link">
-                <span class="nav-icon">📬</span>
-                Office Response
-            </a>
-        </nav>
-    </div>
-    <div class="content">
-        <div id="weekly-forecast" class="page">
-            <div class="page-header">
-                <h1>🌤️ Weekly Forecast</h1>
+    <div class="dashboard-layout">
+        <div class="sidebar">
+            <img src="loggg.jpeg" alt="Logo" class="sidebar-logo">
+            <h2>Teachers Dashboard</h2>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span> Home</a>
+                <a href="weekly-forecast.html" class="nav-link active"><span class="nav-icon">📅</span> Weekly Forecast</a>
+                <a href="weekly-activities.html" class="nav-link"><span class="nav-icon">📝</span> Weekly Activities</a>
+                <a href="office-response.html" class="nav-link"><span class="nav-icon">📬</span> Office Response</a>
+                <a href="my-submissions.html" class="nav-link">
+                    <span class="nav-icon">📄</span>
+                    My Submissions
+                </a>
+                <a href="settings.html" class="nav-link">
+                    <span class="nav-icon">⚙️</span>
+                    Settings
+                </a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn" style="margin: 24px 0 0 0; width: 90%; display: block; background: #e53935; color: #fff; font-weight: bold; border: none; border-radius: 6px; padding: 12px 0; cursor: pointer;">Log Out</button>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <button class="back-btn" onclick="window.history.back()">Back ←</button>
+                <span class="header-title">📅 Weekly Forecast</span>
             </div>
-            <div class="class-selection">
-                <div class="selection-group">
-                    <span class="class-label">SELECT CLASS:</span>
-                    <select id="class-select" class="form-select">
-                        <option value="">Select Class</option>
-                        <option value="CRECHE">CRECHE</option>
-                        <option value="NURSERY">NURSERY</option>
-                        <option value="KG1">KG1</option>
-                        <option value="KG2">KG2</option>
-                        <option value="CLASS 1">CLASS 1</option>
-                        <option value="CLASS 2">CLASS 2</option>
-                        <option value="CLASS 3">CLASS 3</option>
-                        <option value="CLASS 4">CLASS 4</option>
-                        <option value="CLASS 5">CLASS 5</option>
-                        <option value="CLASS 6">CLASS 6</option>
-                        <option value="CLASS 7">CLASS 7</option>
-                        <option value="CLASS 8">CLASS 8</option>
-                        <option value="CLASS 9">CLASS 9</option>
-                    </select>
-                </div>
-                <div class="selection-group">
-                    <span class="class-label">SELECT SECTION:</span>
-                    <select id="section-select" class="form-select">
-                        <option value="">Select Section</option>
-                        <option value="SINGLE">SINGLE STREAM</option>
-                        <option value="A">Section A</option>
-                        <option value="B">Section B</option>
-                        <option value="C">Section C</option>
-                        <option value="D">Section D</option>
-                    </select>
-                </div>
-            </div>
-            <div class="selected-class"></div>
-            <div class="add-forecast">
-                <select id="assignment-week" class="form-select">
-                    <option value="">Select Week</option>
-                    <option value="Week 1">Week 1</option>
-                    <option value="Week 2">Week 2</option>
-                    <option value="Week 3">Week 3</option>
-                    <option value="Week 4">Week 4</option>
-                    <option value="Week 5">Week 5</option>
-                    <option value="Week 6">Week 6</option>
-                    <option value="Week 7">Week 7</option>
-                    <option value="Week 8">Week 8</option>
-                    <option value="Week 9">Week 9</option>
-                    <option value="Week 10">Week 10</option>
-                    <option value="Week 11">Week 11</option>
-                    <option value="Week 12">Week 12</option>
-                    <option value="Week 13">Week 13</option>
-                    <option value="Week 14">Week 14</option>
-                    <option value="Week 15">Week 15</option>
-                    <option value="Week 16">Week 16</option>
-                    <option value="Week 17">Week 17</option>
-                    <option value="Week 18">Week 18</option>
-                    <option value="Week 19">Week 19</option>
-                    <option value="Week 20">Week 20</option>
-                </select>
-                <input type="text" id="assignment-subject" placeholder="Subject">
-                <input type="text" id="assignment-topic" placeholder="Topic">
-                <input type="text" id="assignment-subtopic" placeholder="Sub-topic">
-                <input type="text" id="assignment-material" placeholder="Teacher Learner Material">
-                <input type="date" id="assignment-date" placeholder="mm/dd/yyyy">
-                <button onclick="addAssignment()" class="primary-btn">Add Forecast</button>
-            </div>
-            <div id="assignment-status" class="status-message"></div>
-            <table id="assignments-table">
-                <thead>
-                    <tr>
-                        <th>Weeks</th>
-                        <th>Subject</th>
-                        <th>Topic</th>
-                        <th>Sub-topic</th>
-                        <th>Teacher Learner Material</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Week 1</td>
-                        <td>Math</td>
-                        <td>Algebra</td>
-                        <td>Linear Equations</td>
-                        <td>Textbook Ch.3</td>
-                        <td>2025-02-25</td>
-                        <td>Incomplete</td>
-                    </tr>
-                    <tr>
-                        <td>Week 2</td>
-                        <td>Science</td>
-                        <td>Physics</td>
-                        <td>Newton's Laws</td>
-                        <td>Lab Equipment</td>
-                        <td>2025-03-01</td>
-                        <td>Complete</td>
-                    </tr>
-                    <tr>
-                        <td>Week 3</td>
-                        <td>History</td>
-                        <td>World War II</td>
-                        <td>Pacific Theater</td>
-                        <td>Maps & Documents</td>
-                        <td>2025-02-28</td>
-                        <td>Incomplete</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="submit-section">
-                <button onclick="submitForecastData()" class="submit-btn" disabled>
-                    <span class="submit-icon">📤</span>
-                    Submit Forecast Data
-                </button>
+            <div class="container">
+                <form id="forecast-form">
+                    <div class="form-row" style="display: flex; gap: 24px; align-items: flex-end;">
+                        <div style="display: flex; flex-direction: column;">
+                            <label for="date-select">Date:</label>
+                            <input type="date" id="date-select" required />
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <label>Region:</label>
+                            <input type="text" id="region-display" readonly style="background:#f3f3f3; min-width: 160px;" />
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <label>Zone:</label>
+                            <input type="text" id="zone-display" readonly style="background:#f3f3f3; min-width: 160px;" />
+                        </div>
+                        <div style="display: flex; flex-direction: column;">
+                            <label>Circuit:</label>
+                            <input type="text" id="circuit-display" readonly style="background:#f3f3f3; min-width: 160px;" />
+                        </div>
+                    </div>
+                    <div id="questionnaire-sections"></div>
+                    <button type="submit" class="submit-btn">Submit Forecast</button>
+                    <div id="status-message" class="status-message"></div>
+                </form>
             </div>
         </div>
     </div>
-    <script src="script.js"></script>
+    <!-- Profile Icon Button -->
+    <button class="profile-icon-btn" id="profileIconBtn" title="Profile" style="position:fixed;top:18px;right:24px;z-index:100;">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#2563eb"/></svg>
+    </button>
+    <!-- Profile Modal Backdrop and Modal -->
+    <div class="profile-modal-backdrop" id="profileModalBackdrop"></div>
+    <div class="profile-modal" id="profileModal" style="display:none;">
+      <button class="close-profile-modal" id="closeProfileModal">&times;</button>
+      <div class="profile-avatar">
+        <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#fff"/></svg>
+      </div>
+      <div class="profile-username" id="profileUsername" style="text-align:center;font-weight:600;font-size:1.1em;margin-top:8px;"></div>
+      <div class="profile-assignment" id="profileAssignment" style="text-align:center;font-size:0.98em;color:#2563eb;margin-bottom:8px;"></div>
+      <div class="profile-btn-row">
+        <button id="editProfileBtn">EDIT</button>
+        <button id="changePassBtn">PASS</button>
+      </div>
+      <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+    </div>
+    <!-- Profile Edit Modal -->
+    <div class="profile-edit-modal-backdrop" id="profileEditModalBackdrop"></div>
+    <div class="profile-edit-modal" id="profileEditModal" style="display:none;">
+      <button class="close-edit-modal" id="closeEditModal">&times;</button>
+      <h2>Edit Profile</h2>
+      <form id="profileEditForm">
+        <div class="form-group"><label for="editDob">Date of Birth</label><input type="date" id="editDob" name="dob"></div>
+        <div class="form-group"><label for="editPhone">Phone Number</label><input type="text" id="editPhone" name="phone_number"></div>
+        <div class="form-group"><label for="editSex">Sex</label><select id="editSex" name="sex"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
+        <div class="form-group"><label for="editAims">AIMS Number</label><input type="text" id="editAims" name="aims_number"></div>
+        <button type="submit" class="submit-btn">Save</button>
+      </form>
+    </div>
+    <script src="questionnaire.js"></script>
+    <script>
+const user = JSON.parse(localStorage.getItem('user') || 'null');
+if (!user) {
+  window.location.href = 'login.html';
+}
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Fetch all regions, zones, circuits
+        const [regions, zones, circuits] = await Promise.all([
+            fetch('http://localhost:3000/api/regions').then(r => r.json()),
+            fetch('http://localhost:3000/api/zones').then(r => r.json()),
+            fetch('http://localhost:3000/api/circuits').then(r => r.json())
+        ]);
+        function findName(arr, id) {
+            if (!id) return '';
+            const item = arr.find(x => String(x.id) === String(id));
+            if (!item) {
+                console.warn('Could not find name for id', id, arr);
+                return '(Not found)';
+            }
+            return item.name;
+        }
+        document.getElementById('region-display').value = findName(regions, user.region_id) || '(Unassigned)';
+        document.getElementById('zone-display').value = findName(zones, user.zone_id) || '(Unassigned)';
+        document.getElementById('circuit-display').value = findName(circuits, user.circuit_id) || '(Unassigned)';
+    });
+    document.getElementById('forecast-form').onsubmit = async function(e) {
+        e.preventDefault();
+        const date = document.getElementById('date-select').value;
+        // Always use the logged-in user's assignments
+        const user = JSON.parse(localStorage.getItem('user'));
+        const region_id = user ? user.region_id : null;
+        const zone_id = user ? user.zone_id : null;
+        const circuit_id = user ? user.circuit_id : null;
+        if (!date || !region_id || !zone_id || !circuit_id) {
+            alert('Your account is not assigned to a region, zone, or circuit. Please contact your administrator.');
+            return;
+        }
+        const answers = collectAnswers();
+        const statusMsg = document.getElementById('status-message');
+        statusMsg.textContent = '';
+        statusMsg.className = 'status-message';
+        try {
+            // Submit questionnaire response
+            const submitted_by = user ? user.id : null;
+            const res = await fetch('http://localhost:3000/api/questionnaire-responses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    date,
+                    region_id,
+                    zone_id,
+                    circuit_id,
+                    type: 'forecast',
+                    answers,
+                    stage: 'admin',
+                    submitted_by
+                })
+            });
+            if (res.ok) {
+                statusMsg.textContent = 'Submitted!';
+                statusMsg.classList.add('success');
+                this.reset();
+                location.reload(); // Reload the page after successful submission
+            } else {
+                throw new Error('Failed to submit');
+            }
+        } catch (err) {
+            statusMsg.textContent = 'Submission failed.';
+            statusMsg.classList.add('error');
+        }
+    };
+    // Profile Modal Logic
+    const profileIconBtn = document.getElementById('profileIconBtn');
+    const profileModal = document.getElementById('profileModal');
+    const profileModalBackdrop = document.getElementById('profileModalBackdrop');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+    profileIconBtn.onclick = () => {
+      profileModal.style.display = 'flex';
+      profileModalBackdrop.style.display = 'block';
+      // Populate username and assignment
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('profileUsername').textContent = user.name ? `Username: ${user.name}` : '';
+      let assignment = '';
+      if (user.circuit_id) assignment += `Circuit ID: ${user.circuit_id}  `;
+      if (user.zone_id) assignment += `Zone ID: ${user.zone_id}  `;
+      if (user.region_id) assignment += `Region ID: ${user.region_id}`;
+      document.getElementById('profileAssignment').textContent = assignment || '';
+    };
+    profileModalBackdrop.onclick = closeProfileModal.onclick = () => {
+      profileModal.style.display = 'none';
+      profileModalBackdrop.style.display = 'none';
+    };
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    };
+    document.getElementById('editProfileBtn').onclick = function() {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('editDob').value = user.dob || '';
+      document.getElementById('editPhone').value = user.phone_number || '';
+      document.getElementById('editSex').value = user.sex || '';
+      document.getElementById('editAims').value = user.aims_number || '';
+      profileEditModal.style.display = 'flex';
+      profileEditModalBackdrop.style.display = 'block';
+    };
+    const profileEditModalBackdrop = document.getElementById('profileEditModalBackdrop');
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const closeEditModal = document.getElementById('closeEditModal');
+    const profileEditForm = document.getElementById('profileEditForm');
+    closeEditModal.onclick = profileEditModalBackdrop.onclick = function() {
+      profileEditModal.style.display = 'none';
+      profileEditModalBackdrop.style.display = 'none';
+    };
+    profileEditForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const dob = document.getElementById('editDob').value;
+      const phone_number = document.getElementById('editPhone').value;
+      const sex = document.getElementById('editSex').value;
+      const aims_number = document.getElementById('editAims').value;
+      const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dob, phone_number, sex, aims_number })
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        Object.assign(user, { dob, phone_number, sex, aims_number });
+        localStorage.setItem('user', JSON.stringify(user));
+        alert('Profile updated!');
+        profileEditModal.style.display = 'none';
+        profileEditModalBackdrop.style.display = 'none';
+      } else {
+        alert('Failed to update profile.');
+      }
+    };
+    </script>
 </body>
 </html> 

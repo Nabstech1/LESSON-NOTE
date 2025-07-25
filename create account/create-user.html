@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User Account</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #f7faff; font-family: 'Inter', sans-serif; }
+        .create-account-container {
+            max-width: 400px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px #0001;
+            padding: 36px 32px 28px 32px;
+        }
+        .create-account-title {
+            text-align: center;
+            font-size: 2em;
+            color: #2563eb;
+            margin-bottom: 18px;
+        }
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; margin-bottom: 6px; color: #1741a6; font-weight: 500; }
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #bfc9d9;
+            border-radius: 6px;
+            font-size: 1em;
+            background: #f7faff;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus {
+            border: 1.5px solid #2563eb;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 2px #2563eb22;
+        }
+        .submit-btn {
+            width: 100%;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .submit-btn:hover { background: #1741a6; }
+        .status-message {
+            margin-top: 16px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .status-message.success { color: #219150; }
+        .status-message.error { color: #c62828; }
+    </style>
+</head>
+<body>
+    <div class="create-account-container">
+        <div class="create-account-title">Create User Account</div>
+        <form id="create-user-form">
+            <div class="form-group">
+                <label class="form-label" for="name">Name</label>
+                <input type="text" id="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" id="email" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" class="form-control" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="role">Role</label>
+                <select id="role" class="form-control" required>
+                    <option value="">Select Role</option>
+                    <option value="admin">Admin</option>
+                    <option value="regional">Regional</option>
+                    <option value="national">National</option>
+                    <option value="teacher">Teacher</option>
+                </select>
+            </div>
+            <button type="submit" class="submit-btn">Create Account</button>
+            <div id="status-message" class="status-message"></div>
+        </form>
+    </div>
+    <script>
+    document.getElementById('create-user-form').onsubmit = async function(e) {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const role = document.getElementById('role').value;
+        const statusMsg = document.getElementById('status-message');
+        statusMsg.textContent = '';
+        statusMsg.className = 'status-message';
+        try {
+            const res = await fetch('/api/create-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password, role })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                statusMsg.textContent = 'User created successfully!';
+                statusMsg.classList.add('success');
+                document.getElementById('create-user-form').reset();
+            } else {
+                statusMsg.textContent = data.error || 'Failed to create user.';
+                statusMsg.classList.add('error');
+            }
+        } catch (err) {
+            statusMsg.textContent = 'Server error. Please try again.';
+            statusMsg.classList.add('error');
+        }
+    };
+    </script>
+</body>
+</html> 

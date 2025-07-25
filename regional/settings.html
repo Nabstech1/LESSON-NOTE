@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regional - Settings</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .settings-container {
+            max-width: 480px;
+            margin: 48px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px #0001;
+            padding: 36px 32px 28px 32px;
+        }
+        .settings-container h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; color: #2563eb; font-weight: 500; }
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #e57373;
+            border-radius: 6px;
+            font-size: 1em;
+            background: #fbe9e7;
+            margin-bottom: 2px;
+        }
+        input:focus, select:focus {
+            border: 1.5px solid #2563eb;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 2px #2563eb22;
+        }
+        .modal-btn-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .modal-btn-row button {
+            padding: 8px 24px;
+            border: 1.5px solid #2563eb;
+            background: #fff;
+            color: #2563eb;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .modal-btn-row button:hover {
+            background: #2563eb;
+            color: #fff;
+        }
+        .status-message {
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 500;
+            color: #2563eb;
+        }
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 48px;
+          height: 24px;
+          vertical-align: middle;
+        }
+        .switch input { display: none; }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 24px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 18px;
+          width: 18px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #2563eb;
+        }
+        input:checked + .slider:before {
+          transform: translateX(24px);
+        }
+        body.dark-mode {
+          background: #181a1b !important;
+          color: #e0e0e0 !important;
+        }
+        body.dark-mode .settings-container {
+          background: #23272b;
+          color: #e0e0e0;
+          box-shadow: 0 4px 24px #0008;
+        }
+        body.dark-mode input,
+        body.dark-mode select {
+          background: #23272b;
+          color: #e0e0e0;
+          border: 1.5px solid #444;
+        }
+        body.dark-mode label,
+        body.dark-mode .status-message {
+          color: #90caf9;
+        }
+        body.dark-mode .modal-btn-row button {
+          background: #23272b;
+          color: #90caf9;
+          border: 1.5px solid #90caf9;
+        }
+        body.dark-mode .modal-btn-row button:hover {
+          background: #90caf9;
+          color: #23272b;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <img src="../loggg.jpeg" alt="Logo" class="home-logo" style="display:block;margin:0 auto 16px auto;max-width:120px;">
+        <h2>Regional Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                Dashboard
+            </a>
+            <a href="review-forecasts.html" class="nav-link">
+                <span class="nav-icon">📋</span>
+                Review Forecasts
+            </a>
+            <a href="review-activities.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                Review Activities
+            </a>
+            <a href="submission-history.html" class="nav-link">
+                <span class="nav-icon">🕓</span>
+                Submission History
+            </a>
+            <a href="settings.html" class="nav-link active">
+                <span class="nav-icon">⚙️</span>
+                Settings
+            </a>
+        </nav>
+        <button id="logoutBtn" class="logout-btn" style="margin: 24px 0 0 0; width: 90%; display: block; background: #e53935; color: #fff; font-weight: bold; border: none; border-radius: 6px; padding: 12px 0; cursor: pointer;">Log Out</button>
+    </div>
+    <div class="content">
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="title-icon">⚙️</span>
+                    Regional Settings
+                </h1>
+            </div>
+            <div class="settings-container">
+                <h1>Profile Settings</h1>
+                <form id="profileEditForm">
+                    <div class="form-group">
+                        <label for="editDob">Date of Birth</label>
+                        <input type="date" id="editDob" name="dob" />
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone Number</label>
+                        <input type="text" id="editPhone" name="phone_number" maxlength="30" />
+                    </div>
+                    <div class="form-group">
+                        <label for="editSex">Sex</label>
+                        <select id="editSex" name="sex">
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAims">AIMS Number</label>
+                        <input type="text" id="editAims" name="aims_number" maxlength="50" />
+                    </div>
+                    <div class="form-group">
+                      <label for="theme-switch">Theme</label>
+                      <label class="switch">
+                        <input type="checkbox" id="theme-switch">
+                        <span class="slider round"></span>
+                      </label>
+                      <span id="theme-label" style="margin-left:12px; font-weight:500; color:#2563eb;">Light</span>
+                    </div>
+                    <div class="modal-btn-row">
+                        <button type="submit" id="saveEditBtn">Save</button>
+                    </div>
+                    <div class="status-message" id="editStatusMsg"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Profile Icon Button -->
+    <button class="profile-icon-btn" id="profileIconBtn" title="Profile" style="position:fixed;top:18px;right:24px;z-index:100;">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#2563eb"/></svg>
+    </button>
+    <!-- Profile Modal Backdrop and Modal -->
+    <div class="profile-modal-backdrop" id="profileModalBackdrop"></div>
+    <div class="profile-modal" id="profileModal" style="display:none;">
+      <button class="close-profile-modal" id="closeProfileModal">&times;</button>
+      <div class="profile-avatar">
+        <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#fff"/></svg>
+      </div>
+      <div class="profile-username" id="profileUsername" style="text-align:center;font-weight:600;font-size:1.1em;margin-top:8px;"></div>
+      <div class="profile-assignment" id="profileAssignment" style="text-align:center;font-size:0.98em;color:#2563eb;margin-bottom:8px;"></div>
+      <div class="profile-btn-row">
+        <button id="editProfileBtn">EDIT</button>
+        <button id="changePassBtn">PASS</button>
+      </div>
+      <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+    </div>
+    <!-- Profile Edit Modal -->
+    <div class="profile-edit-modal-backdrop" id="profileEditModalBackdrop"></div>
+    <div class="profile-edit-modal" id="profileEditModal" style="display:none;">
+      <button class="close-edit-modal" id="closeEditModal">&times;</button>
+      <h2>Edit Profile</h2>
+      <form id="profileEditForm">
+        <div class="form-group"><label for="editDob">Date of Birth</label><input type="date" id="editDob" name="dob"></div>
+        <div class="form-group"><label for="editPhone">Phone Number</label><input type="text" id="editPhone" name="phone_number"></div>
+        <div class="form-group"><label for="editSex">Sex</label><select id="editSex" name="sex"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
+        <div class="form-group"><label for="editAims">AIMS Number</label><input type="text" id="editAims" name="aims_number"></div>
+        <button type="submit" class="submit-btn">Save</button>
+      </form>
+    </div>
+    <script>
+    // Prefill form with user data
+    document.addEventListener('DOMContentLoaded', function() {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        document.getElementById('editDob').value = user.dob || '';
+        document.getElementById('editPhone').value = user.phone_number || '';
+        document.getElementById('editSex').value = user.sex || '';
+        document.getElementById('editAims').value = user.aims_number || '';
+    });
+    document.getElementById('profileEditForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const dob = document.getElementById('editDob').value;
+        const phone_number = document.getElementById('editPhone').value.trim();
+        const sex = document.getElementById('editSex').value;
+        const aims_number = document.getElementById('editAims').value.trim();
+        const editStatusMsg = document.getElementById('editStatusMsg');
+        editStatusMsg.textContent = '';
+        try {
+            const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ dob, phone_number, sex, aims_number })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                user.dob = dob;
+                user.phone_number = phone_number;
+                user.sex = sex;
+                user.aims_number = aims_number;
+                localStorage.setItem('user', JSON.stringify(user));
+                editStatusMsg.textContent = 'Profile updated!';
+            } else {
+                editStatusMsg.textContent = data.error || 'Failed to update profile.';
+            }
+        } catch (err) {
+            editStatusMsg.textContent = 'Server error. Please try again.';
+        }
+    };
+    // Theme switcher logic
+    const themeSwitch = document.getElementById('theme-switch');
+    const themeLabel = document.getElementById('theme-label');
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeSwitch.checked = true;
+        themeLabel.textContent = 'Dark';
+      } else {
+        document.body.classList.remove('dark-mode');
+        themeSwitch.checked = false;
+        themeLabel.textContent = 'Light';
+      }
+    }
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(savedTheme);
+    themeSwitch.onchange = function() {
+      const theme = themeSwitch.checked ? 'dark' : 'light';
+      localStorage.setItem('theme', theme);
+      applyTheme(theme);
+    };
+    // Profile Modal Logic
+    const profileIconBtn = document.getElementById('profileIconBtn');
+    const profileModal = document.getElementById('profileModal');
+    const profileModalBackdrop = document.getElementById('profileModalBackdrop');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditModalBackdrop = document.getElementById('profileEditModalBackdrop');
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const closeEditModal = document.getElementById('closeEditModal');
+    const profileEditForm = document.getElementById('profileEditForm');
+    profileIconBtn.onclick = () => {
+      profileModal.style.display = 'flex';
+      profileModalBackdrop.style.display = 'block';
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('profileUsername').textContent = user.name ? `Username: ${user.name}` : '';
+      let assignment = '';
+      if (user.circuit_id) assignment += `Circuit ID: ${user.circuit_id}  `;
+      if (user.zone_id) assignment += `Zone ID: ${user.zone_id}  `;
+      if (user.region_id) assignment += `Region ID: ${user.region_id}`;
+      document.getElementById('profileAssignment').textContent = assignment || '';
+    };
+    profileModalBackdrop.onclick = closeProfileModal.onclick = () => {
+      profileModal.style.display = 'none';
+      profileModalBackdrop.style.display = 'none';
+    };
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.removeItem('user');
+      window.location.href = '../login.html';
+    };
+    editProfileBtn.onclick = function() {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('editDob').value = user.dob || '';
+      document.getElementById('editPhone').value = user.phone_number || '';
+      document.getElementById('editSex').value = user.sex || '';
+      document.getElementById('editAims').value = user.aims_number || '';
+      profileEditModal.style.display = 'flex';
+      profileEditModalBackdrop.style.display = 'block';
+    };
+    closeEditModal.onclick = profileEditModalBackdrop.onclick = function() {
+      profileEditModal.style.display = 'none';
+      profileEditModalBackdrop.style.display = 'none';
+    };
+    profileEditForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const dob = document.getElementById('editDob').value;
+      const phone_number = document.getElementById('editPhone').value;
+      const sex = document.getElementById('editSex').value;
+      const aims_number = document.getElementById('editAims').value;
+      const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dob, phone_number, sex, aims_number })
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        Object.assign(user, { dob, phone_number, sex, aims_number });
+        localStorage.setItem('user', JSON.stringify(user));
+        alert('Profile updated!');
+        profileEditModal.style.display = 'none';
+        profileEditModalBackdrop.style.display = 'none';
+      } else {
+        alert('Failed to update profile.');
+      }
+    };
+    document.getElementById('changePassBtn').onclick = function() {
+      document.getElementById('profileModal').style.display = 'none';
+      document.getElementById('profilePassModal').style.display = 'flex';
+      document.getElementById('profilePassModalBackdrop').style.display = 'block';
+    };
+    </script>
+</body>
+</html> 

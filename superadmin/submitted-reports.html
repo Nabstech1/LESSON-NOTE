@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superadmin - Submitted Reports</title>
+    <link rel="stylesheet" href="superadmin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .reports-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 48px 0;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px #0001;
+            padding: 36px 32px 28px 32px;
+            box-sizing: border-box;
+        }
+        .reports-container h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .filter-row {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 24px;
+            align-items: flex-end;
+        }
+        .filter-row label { color: #2563eb; font-weight: 500; }
+        .filter-row input, .filter-row select {
+            padding: 8px 12px;
+            border: 1.5px solid #e57373;
+            border-radius: 6px;
+            font-size: 1em;
+            background: #fbe9e7;
+        }
+        .filter-row button {
+            padding: 8px 24px;
+            border: 1.5px solid #2563eb;
+            background: #2563eb;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .reports-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 18px;
+        }
+        .reports-table th, .reports-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        .reports-table th {
+            background: #2563eb;
+            color: #fff;
+        }
+        .view-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 16px;
+            cursor: pointer;
+        }
+        .view-btn:hover { background: #1741a6; }
+    </style>
+</head>
+<body>
+    <div class="superadmin-container">
+        <aside class="sidebar">
+            <div class="sidebar-title">Superadmin</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Dashboard Home</a></li>
+                    <li><a href="#create-account">Create Account</a></li>
+                    <li><a href="#manage-accounts">Manage Accounts</a></li>
+                    <li><a href="#classes">Manage Classes</a></li>
+                    <li><a href="#activities">Manage Activities</a></li>
+                    <li><a href="#forecasts">Manage Forecasts</a></li>
+                    <li><a href="submitted-reports.html" class="active">Submitted Reports</a></li>
+                    <li><a href="#settings">Settings</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="dashboard-content" id="dashboard-content">
+            <div class="reports-container">
+                <h1>All Submitted Reports</h1>
+                <div class="filter-row">
+                    <div>
+                        <label for="filter-date-from">From</label><br>
+                        <input type="date" id="filter-date-from">
+                    </div>
+                    <div>
+                        <label for="filter-date-to">To</label><br>
+                        <input type="date" id="filter-date-to">
+                    </div>
+                    <div>
+                        <label for="filter-level">Level</label><br>
+                        <select id="filter-level">
+                            <option value="">All Levels</option>
+                            <option value="teacher">Teacher/Circuit</option>
+                            <option value="admin">Admin/Zonal</option>
+                            <option value="regional">Regional</option>
+                        </select>
+                    </div>
+                    <button id="apply-filter-btn">Apply Filter</button>
+                </div>
+                <table class="reports-table">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>FROM</th>
+                            <th>TO</th>
+                            <th>LEVEL</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reports-table-body"></tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <!-- Profile Icon Button -->
+    <button class="profile-icon-btn" id="profileIconBtn" title="Profile">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#2563eb"/></svg>
+    </button>
+    <!-- Profile Modal Backdrop and Modal -->
+    <div class="profile-modal-backdrop" id="profileModalBackdrop"></div>
+    <div class="profile-modal" id="profileModal" style="display:none;">
+      <button class="close-profile-modal" id="closeProfileModal">&times;</button>
+      <div class="profile-avatar">
+        <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#fff"/></svg>
+      </div>
+      <div class="profile-btn-row">
+        <button id="editProfileBtn">EDIT</button>
+        <button id="changePassBtn">PASS</button>
+      </div>
+      <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+    </div>
+    <script src="superadmin.js"></script>
+    <script>
+    async function fetchReports(filters = {}) {
+        let url = 'http://localhost:3000/api/all-reports?';
+        if (filters.from) url += `from=${filters.from}&`;
+        if (filters.to) url += `to=${filters.to}&`;
+        if (filters.level) url += `level=${filters.level}&`;
+        const res = await fetch(url);
+        return await res.json();
+    }
+    function renderReportsTable(reports) {
+        const tbody = document.getElementById('reports-table-body');
+        tbody.innerHTML = '';
+        reports.forEach(report => {
+            let dateISO = '';
+            let dateStr = '';
+            if (report.submitted_at) {
+                dateISO = report.submitted_at.split('T')[0].replace(/\//g, '-');
+                const parts = dateISO.split('-');
+                if (parts.length === 3) {
+                    dateStr = `${parts[1]}/${parts[2]}/${parts[0]}`;
+                } else {
+                    dateStr = report.submitted_at;
+                }
+            }
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${dateStr}</td>
+                <td>${report.from || ''}</td>
+                <td>${report.to || ''}</td>
+                <td>${report.level || ''}</td>
+                <td>${report.status === 'READ' ? 'READ' : 'UNREAD'}</td>
+                <td><button class="view-btn" onclick='openModal(${JSON.stringify(report.answers)})'>View</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+    async function loadReports() {
+        const reports = await fetchReports();
+        renderReportsTable(reports);
+    }
+    document.getElementById('apply-filter-btn').onclick = async function() {
+        const from = document.getElementById('filter-date-from').value;
+        const to = document.getElementById('filter-date-to').value;
+        const level = document.getElementById('filter-level').value;
+        const reports = await fetchReports({ from, to, level });
+        renderReportsTable(reports);
+    };
+    document.addEventListener('DOMContentLoaded', loadReports);
+    // Dummy openModal function for now
+    function openModal(answers) {
+        alert('Report details coming soon!');
+    }
+    </script>
+</body>
+</html> 

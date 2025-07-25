@@ -71,20 +71,23 @@ const api = {
         try {
             console.log(`Fetching forecast with ID: ${id}`);
             const response = await apiCall(`/forecasts/${id}`);
-            
+            console.log('Raw forecast response:', response); // Debug
+            if (Array.isArray(response)) {
+                if (response.length === 0) {
+                    throw new Error(`Forecast with ID ${id} not found`);
+                }
+                return response[0];
+            }
             if (!response) {
                 throw new Error(`Forecast with ID ${id} not found`);
             }
-            
             // Validate the response structure
-            if (!response.class_name || !response.week_number) {
+            if (!response.class_name && !response.week_number) {
                 console.warn('Forecast data may be incomplete:', response);
             }
-            
             return response;
         } catch (error) {
             console.error('Error fetching forecast:', error);
-            // Include more context in the error message
             throw new Error(`Failed to load forecast ${id}: ${error.message}`);
         }
     },

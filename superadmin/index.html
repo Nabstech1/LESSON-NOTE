@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superadmin Dashboard</title>
+    <link rel="stylesheet" href="superadmin-styles.css">
+</head>
+<body>
+    <div class="superadmin-container">
+        <aside class="sidebar">
+            <div class="sidebar-title">Superadmin</div>
+            <nav>
+                <ul>
+                    <li><a href="#dashboard" class="active">Dashboard Home</a></li>
+                    <li><a href="#create-account">Create Account</a></li>
+                    <li><a href="#manage-accounts">Manage Accounts</a></li>
+                    <li><a href="#settings">Region/Zone/Circuit</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <main class="dashboard-content" id="dashboard-content">
+            <div class="dashboard-tiles">
+                <div class="dashboard-tile tile-users">
+                    <div class="tile-icon">👤</div>
+                    <div class="tile-label">Total Users</div>
+                    <div class="tile-value" id="tileTotalUsers">--</div>
+                </div>
+                <div class="dashboard-tile tile-regions">
+                    <div class="tile-icon">🌍</div>
+                    <div class="tile-label">Regions</div>
+                    <div class="tile-value" id="tileTotalRegions">--</div>
+                </div>
+                <div class="dashboard-tile tile-zones">
+                    <div class="tile-icon">🗺️</div>
+                    <div class="tile-label">Zones</div>
+                    <div class="tile-value" id="tileTotalZones">--</div>
+                </div>
+                <div class="dashboard-tile tile-circuits">
+                    <div class="tile-icon">🔌</div>
+                    <div class="tile-label">Circuits</div>
+                    <div class="tile-value" id="tileTotalCircuits">--</div>
+                </div>
+            </div>
+            <h1>Welcome, Superadmin</h1>
+            <div class="dashboard-widgets">
+                <!-- System stats, user activity, etc. will go here -->
+                <div class="widget">System Stats (Coming Soon)</div>
+                <div class="widget">User Activity (Coming Soon)</div>
+            </div>
+        </main>
+    </div>
+    <!-- Profile Icon Button -->
+    <button class="profile-icon-btn" id="profileIconBtn" title="Profile">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#2563eb"/></svg>
+    </button>
+    <!-- Profile Modal Backdrop and Modal -->
+    <div class="profile-modal-backdrop" id="profileModalBackdrop"></div>
+    <div class="profile-modal" id="profileModal" style="display:none;">
+      <button class="close-profile-modal" id="closeProfileModal">&times;</button>
+      <div class="profile-avatar">
+        <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#fff"/></svg>
+      </div>
+      <div class="profile-username" id="profileUsername" style="text-align:center;font-weight:600;font-size:1.1em;margin-top:8px;"></div>
+      <div class="profile-assignment" id="profileAssignment" style="text-align:center;font-size:0.98em;color:#2563eb;margin-bottom:8px;"></div>
+      <div class="profile-btn-row">
+        <button id="editProfileBtn">EDIT</button>
+        <button id="changePassBtn">PASS</button>
+      </div>
+      <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+    </div>
+    <script src="superadmin.js"></script>
+    <script>
+    // Fetch and display dashboard tile stats
+    async function updateDashboardTiles() {
+      try {
+        const [users, regions, zones, circuits] = await Promise.all([
+          fetch('http://localhost:3000/api/users').then(r => r.json()),
+          fetch('http://localhost:3000/api/regions').then(r => r.json()),
+          fetch('http://localhost:3000/api/zones').then(r => r.json()),
+          fetch('http://localhost:3000/api/circuits').then(r => r.json()),
+        ]);
+        document.getElementById('tileTotalUsers').textContent = Array.isArray(users) ? users.length : '--';
+        document.getElementById('tileTotalRegions').textContent = Array.isArray(regions) ? regions.length : '--';
+        document.getElementById('tileTotalZones').textContent = Array.isArray(zones) ? zones.length : '--';
+        document.getElementById('tileTotalCircuits').textContent = Array.isArray(circuits) ? circuits.length : '--';
+      } catch (err) {
+        // fallback: leave as --
+      }
+    }
+    window.addEventListener('DOMContentLoaded', updateDashboardTiles);
+    // Profile Modal Logic
+    const profileIconBtn = document.getElementById('profileIconBtn');
+    const profileModal = document.getElementById('profileModal');
+    const profileModalBackdrop = document.getElementById('profileModalBackdrop');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+    profileIconBtn.onclick = () => {
+      profileModal.style.display = 'flex';
+      profileModalBackdrop.style.display = 'block';
+      // Populate username and assignment
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('profileUsername').textContent = user.name ? `Username: ${user.name}` : '';
+      // Show assigned circuit/zone/region if present
+      let assignment = '';
+      if (user.circuit_id) assignment += `Circuit ID: ${user.circuit_id}  `;
+      if (user.zone_id) assignment += `Zone ID: ${user.zone_id}  `;
+      if (user.region_id) assignment += `Region ID: ${user.region_id}`;
+      document.getElementById('profileAssignment').textContent = assignment || '';
+    };
+    profileModalBackdrop.onclick = closeProfileModal.onclick = () => {
+      profileModal.style.display = 'none';
+      profileModalBackdrop.style.display = 'none';
+    };
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.removeItem('user');
+      window.location.href = '../login.html';
+    };
+    document.getElementById('editProfileBtn').onclick = function() {
+      alert('Edit profile functionality coming soon!');
+    };
+    document.getElementById('changePassBtn').onclick = function() {
+      alert('Change password functionality coming soon!');
+    };
+    // Load correct section on page load based on hash
+    window.addEventListener('DOMContentLoaded', function() {
+      const hash = window.location.hash ? window.location.hash.substring(1) : '';
+      if (typeof loadSection === 'function') {
+        loadSection(hash || 'dashboard');
+      }
+    });
+    </script>
+</body>
+</html> 

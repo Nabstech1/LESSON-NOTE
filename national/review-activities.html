@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Review Activities</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <img src="../loggg.jpeg" alt="Logo" class="home-logo" style="display:block;margin:0 auto 16px auto;max-width:120px;">
+        <h2>Admin Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                Dashboard
+            </a>
+            <a href="review-forecasts.html" class="nav-link">
+                <span class="nav-icon">📋</span>
+                Review Forecasts
+            </a>
+            <a href="review-activities.html" class="nav-link active">
+                <span class="nav-icon">📝</span>
+                Review Activities
+            </a>
+            <a href="manage-accounts.html" class="nav-link"><span class="nav-icon">👥</span>Manage Accounts</a>
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙️</span>
+                Settings
+            </a>
+        </nav>
+        <button id="logoutBtn" class="logout-btn" style="margin: 24px 0 0 0; width: 90%; display: block; background: #e53935; color: #fff; font-weight: bold; border: none; border-radius: 6px; padding: 12px 0; cursor: pointer;">Log Out</button>
+    </div>
+
+    <div class="content">
+        <div class="page">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <span class="title-icon">📝</span>
+                    Review Weekly Activities
+                </h1>
+            </div>
+
+            <!-- 1. Card-based filter section -->
+            <div class="card filters-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <span class="title-icon">🔍</span>
+                        Filter Activities
+                    </h3>
+                </div>
+                <div class="filters-row">
+                    <div class="form-group">
+                        <label class="form-label" for="from-date">From</label>
+                        <input type="date" id="from-date" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="to-date">To</label>
+                        <input type="date" id="to-date" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="region-filter">Region</label>
+                        <select id="region-filter" class="form-control">
+                            <option value="">All Regions</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="zone-filter">Zone</label>
+                        <select id="zone-filter" class="form-control">
+                            <option value="">All Zones</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filters-row">
+                    <div class="form-group">
+                        <label class="form-label" for="circuit-filter">Circuit</label>
+                        <select id="circuit-filter" class="form-control">
+                            <option value="">All Circuits</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="status-filter">Status</label>
+                        <select id="status-filter" class="form-control">
+                            <option value="">All</option>
+                            <option value="READ">READ</option>
+                            <option value="UNREAD">UNREAD</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!-- 2. Table structure -->
+            <div class="card table-card">
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>FROM</th>
+                                <th>TO</th>
+                                <th>Status</th>
+                                <th class="actions-col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activities-table-body">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 3. Modern modal for activity details -->
+            <div id="review-modal" class="modal" style="display:none;">
+                <div class="modal-content" style="max-width:640px;margin:40px auto;padding:24px 28px;">
+                    <button class="close-btn" onclick="closeModal()" style="position:absolute;top:10px;right:16px;font-size:1.5em;background:none;border:none;color:#888;cursor:pointer;">&times;</button>
+                    <h2 style="margin-top:0;">Review Activity</h2>
+                    <div id="modal-activity-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Icon Button -->
+    <button class="profile-icon-btn" id="profileIconBtn" title="Profile">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#2563eb"/></svg>
+    </button>
+    <!-- Profile Modal Backdrop and Modal -->
+    <div class="profile-modal-backdrop" id="profileModalBackdrop"></div>
+    <div class="profile-modal" id="profileModal" style="display:none;">
+      <button class="close-profile-modal" id="closeProfileModal">&times;</button>
+      <div id="profileUsername" style="font-weight:600; color:#2563eb; margin-bottom:8px;">Username: </div>
+      <div class="profile-avatar">
+        <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#fff"/></svg>
+      </div>
+      <div class="profile-username" id="profileUsername" style="text-align:center;font-weight:600;font-size:1.1em;margin-top:8px;"></div>
+      <div class="profile-assignment" id="profileAssignment" style="text-align:center;font-size:0.98em;color:#2563eb;margin-bottom:8px;"></div>
+      <div class="profile-btn-row">
+        <button id="editProfileBtn">EDIT</button>
+        <button id="changePassBtn">PASS</button>
+      </div>
+      <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+    </div>
+    <!-- Profile Edit Modal Backdrop and Modal -->
+    <div class="profile-edit-modal-backdrop" id="profileEditModalBackdrop"></div>
+    <div class="profile-edit-modal" id="profileEditModal" style="display:none;">
+      <button class="close-edit-modal" id="closeEditModal">&times;</button>
+      <h2>Edit Profile</h2>
+      <form id="profileEditForm">
+        <div class="form-group">
+          <label for="editDob">Date of Birth</label>
+          <input type="date" id="editDob" name="dob" />
+        </div>
+        <div class="form-group">
+          <label for="editPhone">Phone Number</label>
+          <input type="text" id="editPhone" name="phone_number" maxlength="30" />
+        </div>
+        <div class="form-group">
+          <label for="editSex">Sex</label>
+          <select id="editSex" name="sex">
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editAims">AIMS Number</label>
+          <input type="text" id="editAims" name="aims_number" maxlength="50" />
+        </div>
+        <div class="modal-btn-row">
+          <button type="button" id="cancelEditBtn">Cancel</button>
+          <button type="submit" id="saveEditBtn">Save</button>
+        </div>
+        <div class="status-message" id="editStatusMsg"></div>
+      </form>
+    </div>
+
+    <!-- Password Change Modal Backdrop and Modal (moved to end of body) -->
+    <div class="profile-pass-modal-backdrop" id="profilePassModalBackdrop" style="display:none;"></div>
+    <div class="profile-pass-modal" id="profilePassModal" style="display:none;">
+      <div class="profile-pass-modal-content">
+        <button class="close-pass-modal" id="closePassModal">&times;</button>
+        <h2>Change Password</h2>
+        <form id="profilePassForm">
+          <div class="form-group">
+            <label for="currentPass">Current Password</label>
+            <input type="password" id="currentPass" name="currentPass" required />
+          </div>
+          <div class="form-group">
+            <label for="newPass">New Password</label>
+            <input type="password" id="newPass" name="newPass" required minlength="6" />
+          </div>
+          <div class="form-group">
+            <label for="confirmPass">Confirm New Password</label>
+            <input type="password" id="confirmPass" name="confirmPass" required minlength="6" />
+          </div>
+          <div class="modal-btn-row">
+            <button type="button" id="cancelPassBtn">Cancel</button>
+            <button type="submit" id="savePassBtn">Save</button>
+          </div>
+          <div class="status-message" id="passStatusMsg"></div>
+        </form>
+        </div>
+    </div>
+
+    <script src="../api.js"></script>
+    <script src="admin.js"></script>
+    <script>
+const user = JSON.parse(localStorage.getItem('user') || 'null');
+if (!user) {
+  window.location.href = '../login.html';
+}
+
+async function populateRegionZoneCircuitFilters() {
+    // Populate regions
+    const regionRes = await fetch('http://localhost:3000/api/regions');
+    const regions = await regionRes.json();
+    const regionFilter = document.getElementById('region-filter');
+    regionFilter.innerHTML = '<option value="">All Regions</option>' +
+        regions.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    // Populate zones
+    const zoneRes = await fetch('http://localhost:3000/api/zones');
+    const zones = await zoneRes.json();
+    const zoneFilter = document.getElementById('zone-filter');
+    zoneFilter.innerHTML = '<option value="">All Zones</option>' +
+        zones.map(z => `<option value="${z.id}">${z.name}</option>`).join('');
+    // Populate circuits
+    const circuitRes = await fetch('http://localhost:3000/api/circuits');
+    const circuits = await circuitRes.json();
+    const circuitFilter = document.getElementById('circuit-filter');
+    circuitFilter.innerHTML = '<option value="">All Circuits</option>' +
+        circuits.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+}
+
+function getSelectedFilters() {
+    return {
+        from: document.getElementById('from-date').value,
+        to: document.getElementById('to-date').value,
+        region: document.getElementById('region-filter').value,
+        zone: document.getElementById('zone-filter').value,
+        circuit: document.getElementById('circuit-filter').value,
+        status: document.getElementById('status-filter').value
+    };
+}
+
+function renderActivityModal(answers) {
+    const container = document.getElementById('modal-activity-content');
+    container.innerHTML = '';
+    if (!answers) return;
+    let parsedAnswers = answers;
+    if (typeof answers === 'string') {
+        try { parsedAnswers = JSON.parse(answers); } catch (e) { parsedAnswers = {}; }
+    }
+    Object.entries(parsedAnswers).forEach(([topic, questions]) => {
+        const topicDiv = document.createElement('div');
+        topicDiv.className = 'modal-topic';
+        const topicTitle = document.createElement('h4');
+        topicTitle.style.color = '#2563eb';
+        topicTitle.style.fontSize = '1.15em';
+        topicTitle.style.marginTop = '18px';
+        topicTitle.textContent = topic;
+        topicDiv.appendChild(topicTitle);
+        // Create a table for questions/answers
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.marginBottom = '18px';
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const qth = document.createElement('th');
+        qth.textContent = 'Question';
+        qth.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+        qth.style.color = '#1741a6';
+        qth.style.padding = '6px 10px';
+        qth.style.textAlign = 'left';
+        const ath = document.createElement('th');
+        ath.textContent = 'Answer';
+        ath.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+        ath.style.color = '#1741a6';
+        ath.style.padding = '6px 10px';
+        ath.style.textAlign = 'left';
+        headerRow.appendChild(qth);
+        headerRow.appendChild(ath);
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        let rowIdx = 0;
+        Object.entries(questions).forEach(([label, value]) => {
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                Object.entries(value).forEach(([subLabel, subValue]) => {
+                    const row = document.createElement('tr');
+                    row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                    const qCell = document.createElement('td');
+                    qCell.textContent = label + ' - ' + subLabel;
+                    qCell.style.fontWeight = 'bold';
+                    qCell.style.padding = '6px 10px';
+                    const aCell = document.createElement('td');
+                    aCell.textContent = subValue;
+                    aCell.style.padding = '6px 10px';
+                    row.appendChild(qCell);
+                    row.appendChild(aCell);
+                    tbody.appendChild(row);
+                    rowIdx++;
+                });
+            } else {
+                const row = document.createElement('tr');
+                row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                const qCell = document.createElement('td');
+                qCell.textContent = label;
+                qCell.style.fontWeight = 'bold';
+                qCell.style.padding = '6px 10px';
+                const aCell = document.createElement('td');
+                aCell.textContent = value;
+                aCell.style.padding = '6px 10px';
+                row.appendChild(qCell);
+                row.appendChild(aCell);
+                tbody.appendChild(row);
+                rowIdx++;
+            }
+        });
+        table.appendChild(tbody);
+        topicDiv.appendChild(table);
+        container.appendChild(topicDiv);
+    });
+}
+
+function openModal(answers) {
+    renderActivityModal(answers);
+    document.getElementById('review-modal').style.display = 'block';
+}
+function closeModal() {
+    document.getElementById('review-modal').style.display = 'none';
+}
+
+async function fetchAndRenderActivities() {
+    const filters = getSelectedFilters();
+    let url = 'http://localhost:3000/api/questionnaire-responses?type=activity&stage=national';
+    if (filters.from) url += `&from=${filters.from}`;
+    if (filters.to) url += `&to=${filters.to}`;
+    if (filters.region) url += `&region_id=${filters.region}`;
+    if (filters.zone) url += `&zone_id=${filters.zone}`;
+    if (filters.circuit) url += `&circuit_id=${filters.circuit}`;
+    if (filters.status) url += `&status=${filters.status}`;
+    const res = await fetch(url);
+    const activities = await res.json();
+    // Sort by submitted_at (or id) descending so newest is first
+    activities.sort((a, b) => {
+        const dateA = a.regional_forward_date ? new Date(a.regional_forward_date) : new Date(0);
+        const dateB = b.regional_forward_date ? new Date(b.regional_forward_date) : new Date(0);
+        if (dateA.getTime() !== dateB.getTime()) {
+            return dateB - dateA; // Most recent first
+        }
+        return (b.id || 0) - (a.id || 0); // Fallback to id
+    });
+    const tbody = document.getElementById('activities-table-body');
+    tbody.innerHTML = '';
+    const regionsRes = await fetch('http://localhost:3000/api/regions');
+    const regions = await regionsRes.json();
+    const regionsMap = {};
+    regions.forEach(r => { regionsMap[r.id] = r.name; });
+    activities.forEach(activity => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${activity.regional_forward_date ? new Date(activity.regional_forward_date).toLocaleDateString() : ''}</td>
+            <td>${regionsMap[activity.region_id] || ''}</td>
+            <td>NATIONAL</td>
+            <td class="status-cell">${activity.status === 'READ' ? 'READ' : 'UNREAD'}</td>
+            <td class="actions-col"></td>
+        `;
+        // Add View and Check buttons
+        const actionCell = tr.querySelector('td:last-child');
+        const viewBtn = document.createElement('button');
+        viewBtn.className = 'view-btn action-btn';
+        viewBtn.textContent = 'View';
+        viewBtn.onclick = () => openModal(activity.answers);
+        const checkBtn = document.createElement('button');
+        checkBtn.className = 'view-btn action-btn check-btn';
+        checkBtn.style.background = '#2196f3';
+        checkBtn.style.fontWeight = 'bold';
+        checkBtn.title = 'Mark as Read/Unread';
+        checkBtn.innerHTML = activity.status === 'READ' ? '&#10003;' : '&#9633;';
+        checkBtn.onclick = async () => {
+            const newStatus = activity.status === 'READ' ? 'UNREAD' : 'READ';
+            await fetch(`http://localhost:3000/api/questionnaire-responses/${activity.id}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+            // Update UI
+            activity.status = newStatus;
+            tr.querySelector('.status-cell').textContent = newStatus;
+            checkBtn.innerHTML = newStatus === 'READ' ? '&#10003;' : '&#9633;';
+        };
+        // Add download button
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'view-btn action-btn';
+        downloadBtn.textContent = 'Download';
+        downloadBtn.style.background = '#1976d2';
+        downloadBtn.style.color = '#fff';
+        downloadBtn.style.border = '1px solid #1976d2';
+        downloadBtn.style.fontWeight = 'bold';
+        downloadBtn.style.marginRight = '0';
+        downloadBtn.title = 'Download this report as PDF or CSV';
+        downloadBtn.onclick = async () => {
+            const choice = prompt('Enter 1 to download PDF or enter 2 to download CSV');
+            if (choice === '1') {
+                if (!window.jspdf && window.jspdf === undefined) {
+                    await new Promise(resolve => {
+                        const check = setInterval(() => {
+                            if (window.jspdf || window.jspdf !== undefined) { clearInterval(check); resolve(); }
+                        }, 100);
+                    });
+                }
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                let y = 18;
+                // Draw border box
+                doc.setDrawColor(44, 62, 80);
+                doc.setLineWidth(0.8);
+                doc.rect(8, 8, 194, 275, 'S');
+                // Title
+                let reportDate = activity.date;
+                if (reportDate && typeof reportDate === 'string') {
+                    reportDate = reportDate.split('T')[0];
+                } else {
+                    reportDate = '';
+                }
+                doc.setFontSize(18);
+                doc.setTextColor(33, 37, 41);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`${reportDate} REPORT`, 14, y);
+                y += 10;
+                // General Info Header
+                doc.setFillColor(230, 240, 255);
+                doc.setDrawColor(44, 62, 80);
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.rect(14, y-6, 50, 8, 'F');
+                doc.text('General Info', 16, y);
+                y += 8;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                // Only show submitted_at (as date), circuit_name, zone_name, region_name
+                let submittedDate = activity.submitted_at ? String(activity.submitted_at).split('T')[0] : '';
+                doc.setFont('helvetica', 'bold');
+                doc.text('Date:', 16, y);
+                doc.setFont('helvetica', 'normal');
+                doc.text(submittedDate, 46, y);
+                y += 6;
+                doc.setFont('helvetica', 'bold');
+                doc.text('Circuit:', 16, y);
+                doc.setFont('helvetica', 'normal');
+                doc.text(activity.circuit_name || '', 46, y);
+                y += 6;
+                doc.setFont('helvetica', 'bold');
+                doc.text('Zone:', 16, y);
+                doc.setFont('helvetica', 'normal');
+                doc.text(activity.zone_name || '', 46, y);
+                y += 6;
+                doc.setFont('helvetica', 'bold');
+                doc.text('Region:', 16, y);
+                doc.setFont('helvetica', 'normal');
+                doc.text(activity.region_name || '', 46, y);
+                y += 8;
+                // Answers Header
+                doc.setFillColor(230, 240, 255);
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.rect(14, y-6, 40, 8, 'F');
+                doc.text('Answers', 16, y);
+                y += 8;
+                doc.setFontSize(10);
+                let answers = activity.answers;
+                if (typeof answers === 'string') {
+                    try { answers = JSON.parse(answers); } catch (e) { answers = {}; }
+                }
+                Object.entries(answers || {}).forEach(([topic, questions]) => {
+                    // Topic header
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(44, 62, 80);
+                    doc.text(`${topic}:`, 18, y);
+                    y += 6;
+                    doc.setFont('helvetica', 'normal');
+                    doc.setTextColor(33, 37, 41);
+                    // Table header
+                    doc.setFillColor(220, 230, 250);
+                    doc.rect(18, y-5, 80, 7, 'F');
+                    doc.rect(98, y-5, 90, 7, 'F');
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Question', 20, y);
+                    doc.text('Answer', 100, y);
+                    y += 7;
+                    doc.setFont('helvetica', 'normal');
+                    // Table rows
+                    Object.entries(questions || {}).forEach(([q, a]) => {
+                        if (typeof a === 'object' && a !== null) {
+                            Object.entries(a).forEach(([subq, suba]) => {
+                                doc.text(`${q} > ${subq}`, 20, y);
+                                doc.text(`${suba}`, 100, y);
+                                y += 6;
+                                if (y > 280) { doc.addPage(); y = 18; doc.rect(8, 8, 194, 275, 'S'); }
+                            });
+                        } else {
+                            doc.text(`${q}`, 20, y);
+                            doc.text(`${a}`, 100, y);
+                            y += 6;
+                            if (y > 280) { doc.addPage(); y = 18; doc.rect(8, 8, 194, 275, 'S'); }
+                        }
+                    });
+                    y += 2;
+                });
+                doc.save(`activity-${activity.id}.pdf`);
+            } else if (choice === '2') {
+                const flatten = (obj, prefix = '') => Object.entries(obj).reduce((acc, [k, v]) => {
+                    const pre = prefix ? prefix + '.' : '';
+                    if (typeof v === 'object' && v !== null) Object.assign(acc, flatten(v, pre + k));
+                    else acc[pre + k] = v;
+                    return acc;
+                }, {});
+                const flat = flatten(activity);
+                const csv = Object.keys(flat).join(',') + '\n' + Object.values(flat).map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `activity-${activity.id}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 0);
+            }
+        };
+        actionCell.appendChild(viewBtn);
+        actionCell.appendChild(checkBtn);
+        actionCell.appendChild(downloadBtn);
+        tbody.appendChild(tr);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    populateRegionZoneCircuitFilters();
+    // Add event listeners to all filters
+    ['from-date','to-date','region-filter','zone-filter','circuit-filter','status-filter'].forEach(id => {
+        document.getElementById(id).addEventListener('change', fetchAndRenderActivities);
+    });
+    // Initial fetch
+    fetchAndRenderActivities();
+});
+
+// Profile modal logic
+const profileIconBtn = document.getElementById('profileIconBtn');
+const profileModal = document.getElementById('profileModal');
+const profileModalBackdrop = document.getElementById('profileModalBackdrop');
+const closeProfileModal = document.getElementById('closeProfileModal');
+profileIconBtn.onclick = () => {
+  profileModal.style.display = 'flex';
+  profileModalBackdrop.style.display = 'block';
+  // Populate username and assignment
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  document.getElementById('profileUsername').textContent = user.name ? `Username: ${user.name}` : '';
+  let assignment = '';
+  if (user.circuit_id) assignment += `Circuit ID: ${user.circuit_id}  `;
+  if (user.zone_id) assignment += `Zone ID: ${user.zone_id}  `;
+  if (user.region_id) assignment += `Region ID: ${user.region_id}`;
+  document.getElementById('profileAssignment').textContent = assignment || '';
+};
+profileModalBackdrop.onclick = closeProfileModal.onclick = () => {
+  profileModal.style.display = 'none';
+  profileModalBackdrop.style.display = 'none';
+};
+document.getElementById('logoutBtn').onclick = function() {
+  localStorage.removeItem('user');
+  window.location.href = '../login.html';
+};
+document.getElementById('editProfileBtn').onclick = openProfileEditModal;
+document.getElementById('changePassBtn').onclick = function() {
+  document.getElementById('profileModal').style.display = 'none';
+  document.getElementById('profilePassModal').style.display = 'flex';
+  document.getElementById('profilePassModalBackdrop').style.display = 'block';
+};
+// Profile Edit Modal Logic
+const profileEditModal = document.getElementById('profileEditModal');
+const profileEditModalBackdrop = document.getElementById('profileEditModalBackdrop');
+const closeEditModal = document.getElementById('closeEditModal');
+const cancelEditBtn = document.getElementById('cancelEditBtn');
+const profileEditForm = document.getElementById('profileEditForm');
+const editStatusMsg = document.getElementById('editStatusMsg');
+function openProfileEditModal() {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  document.getElementById('editDob').value = user.dob || '';
+  document.getElementById('editPhone').value = user.phone_number || '';
+  document.getElementById('editSex').value = user.sex || '';
+  document.getElementById('editAims').value = user.aims_number || '';
+  editStatusMsg.textContent = '';
+  profileEditModal.style.display = 'flex';
+  profileEditModalBackdrop.style.display = 'block';
+}
+function closeProfileEditModal() {
+  profileEditModal.style.display = 'none';
+  profileEditModalBackdrop.style.display = 'none';
+}
+closeEditModal.onclick = closeProfileEditModal;
+profileEditModalBackdrop.onclick = closeProfileEditModal;
+cancelEditBtn.onclick = closeProfileEditModal;
+profileEditForm.onsubmit = async function(e) {
+  e.preventDefault();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const dob = document.getElementById('editDob').value;
+  const phone_number = document.getElementById('editPhone').value.trim();
+  const sex = document.getElementById('editSex').value;
+  const aims_number = document.getElementById('editAims').value.trim();
+  editStatusMsg.textContent = '';
+  try {
+    const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dob, phone_number, sex, aims_number })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      user.dob = dob;
+      user.phone_number = phone_number;
+      user.sex = sex;
+      user.aims_number = aims_number;
+      localStorage.setItem('user', JSON.stringify(user));
+      editStatusMsg.textContent = 'Profile updated!';
+      setTimeout(closeProfileEditModal, 1000);
+    } else {
+      editStatusMsg.textContent = data.error || 'Failed to update profile.';
+    }
+  } catch (err) {
+    editStatusMsg.textContent = 'Server error. Please try again.';
+  }
+};
+// Profile Pass Modal Logic
+const profilePassModal = document.getElementById('profilePassModal');
+const profilePassModalBackdrop = document.getElementById('profilePassModalBackdrop');
+const closePassModal = document.getElementById('closePassModal');
+const cancelPassBtn = document.getElementById('cancelPassBtn');
+const profilePassForm = document.getElementById('profilePassForm');
+const passStatusMsg = document.getElementById('passStatusMsg');
+function openProfilePassModal() {
+  profileModal.style.display = 'none';
+  profileModalBackdrop.style.display = 'none';
+  profilePassModal.style.display = 'flex';
+  profilePassModalBackdrop.style.display = 'block';
+  passStatusMsg.textContent = '';
+  profilePassForm.reset();
+}
+        // Placeholder for forwarding selected
+        window.forwardSelectedReports = async function(ids) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const submitted_by = user ? user.id : null;
+            for (const id of ids) {
+                await fetch('http://localhost:3000/api/questionnaire-responses', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, stage: 'regional', submitted_by })
+                });
+            }
+            alert('Forwarded selected activities to Regional Level.');
+            loadActivities();
+        };
+    </script>
+</body>
+</html> 

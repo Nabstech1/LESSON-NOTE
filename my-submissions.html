@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Submissions</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .container { max-width: 900px; margin: 32px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0002; padding: 40px 36px 32px 36px; }
+        .table-container { width: 100%; overflow-x: auto; margin-top: 20px; }
+        .my-table { width: 100%; border-collapse: collapse; }
+        .my-table th, .my-table td { padding: 12px 10px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+        .my-table th { background: #2563eb; color: #fff; }
+        .view-btn { background: #2563eb; color: #fff; border: none; border-radius: 4px; padding: 6px 16px; cursor: pointer; display: inline-block; width: auto; }
+        .view-btn:hover { background: #1741a6; }
+        .actions-col { white-space: nowrap; min-width: 160px; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.3); }
+        .modal-content { background: #fff; margin: 60px auto; padding: 32px; border-radius: 10px; max-width: 600px; position: relative; max-height: 80vh; overflow-y: auto; }
+        .close-btn { position: absolute; top: 12px; right: 18px; background: none; border: none; font-size: 1.5em; cursor: pointer; }
+        .modal-topic { margin-bottom: 18px; }
+        .modal-topic h4 { margin-bottom: 6px; color: #2563eb; }
+        .modal-question { margin-left: 12px; margin-bottom: 4px; }
+        .main-content { margin-left: 250px; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Teachers Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span> Home</a>
+            <a href="weekly-forecast.html" class="nav-link"><span class="nav-icon">📅</span> Weekly Forecast</a>
+            <a href="weekly-activities.html" class="nav-link"><span class="nav-icon">📝</span> Weekly Activities</a>
+            <a href="office-response.html" class="nav-link"><span class="nav-icon">📩</span> Office Response</a>
+            <a href="my-submissions.html" class="nav-link active"><span class="nav-icon">📄</span> My Submissions</a>
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙️</span>
+                Settings
+            </a>
+        </nav>
+        <button id="logoutBtn" class="logout-btn" style="margin: 24px 0 0 0; width: 90%; display: block; background: #e53935; color: #fff; font-weight: bold; border: none; border-radius: 6px; padding: 12px 0; cursor: pointer;">Log Out</button>
+    </div>
+    <div class="main-content">
+        <div class="container">
+            <h1>My Submissions</h1>
+            <h2>Weekly Forecasts</h2>
+            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 10px;">
+                <label style="font-weight:500;">From <input id="forecast-date-from" type="date" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #2563eb; font-size: 1em; margin-left:4px; margin-right:8px;" /></label>
+                <label style="font-weight:500;">To <input id="forecast-date-to" type="date" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #2563eb; font-size: 1em; margin-left:4px; margin-right:8px;" /></label>
+                <button id="clear-forecast-date" style="padding: 6px 14px; border-radius: 6px; border: none; background: #e57373; color: #fff; font-size: 1em; cursor: pointer;">Clear</button>
+            </div>
+            <div class="table-container">
+                <table class="my-table">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>FROM</th>
+                            <th>TO</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="my-forecasts-body"></tbody>
+                </table>
+            </div>
+            <h2 style="margin-top:40px;">Weekly Activities</h2>
+            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 12px; gap: 10px;">
+                <label style="font-weight:500;">From <input id="activity-date-from" type="date" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #2563eb; font-size: 1em; margin-left:4px; margin-right:8px;" /></label>
+                <label style="font-weight:500;">To <input id="activity-date-to" type="date" style="padding: 6px 12px; border-radius: 6px; border: 1.5px solid #2563eb; font-size: 1em; margin-left:4px; margin-right:8px;" /></label>
+                <button id="clear-activity-date" style="padding: 6px 14px; border-radius: 6px; border: none; background: #e57373; color: #fff; font-size: 1em; cursor: pointer;">Clear</button>
+            </div>
+            <div class="table-container">
+                <table class="my-table">
+                    <thead>
+                        <tr>
+                            <th>DATE</th>
+                            <th>FROM</th>
+                            <th>TO</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="my-activities-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="submission-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()" style="position:absolute;top:10px;right:16px;font-size:1.5em;background:none;border:none;color:#888;cursor:pointer;">&times;</button>
+            <h2 style="margin-top:0;">Submission Details</h2>
+            <div id="modal-questionnaire-content"></div>
+        </div>
+    </div>
+    <!-- Profile Icon Button -->
+    <button class="profile-icon-btn" id="profileIconBtn" title="Profile" style="position:fixed;top:18px;right:24px;z-index:100;">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#2563eb"/></svg>
+    </button>
+    <!-- Profile Modal Backdrop and Modal -->
+    <div class="profile-modal-backdrop" id="profileModalBackdrop"></div>
+    <div class="profile-modal" id="profileModal" style="display:none;">
+      <button class="close-profile-modal" id="closeProfileModal">&times;</button>
+      <div class="profile-avatar">
+        <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#fff"/></svg>
+      </div>
+      <div class="profile-username" id="profileUsername" style="text-align:center;font-weight:600;font-size:1.1em;margin-top:8px;"></div>
+      <div class="profile-assignment" id="profileAssignment" style="text-align:center;font-size:0.98em;color:#2563eb;margin-bottom:8px;"></div>
+      <div class="profile-btn-row">
+        <button id="editProfileBtn">EDIT</button>
+        <button id="changePassBtn">PASS</button>
+      </div>
+      <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+    </div>
+    <!-- Profile Edit Modal -->
+    <div class="profile-edit-modal-backdrop" id="profileEditModalBackdrop"></div>
+    <div class="profile-edit-modal" id="profileEditModal" style="display:none;">
+      <button class="close-edit-modal" id="closeEditModal">&times;</button>
+      <h2>Edit Profile</h2>
+      <form id="profileEditForm">
+        <div class="form-group"><label for="editDob">Date of Birth</label><input type="date" id="editDob" name="dob"></div>
+        <div class="form-group"><label for="editPhone">Phone Number</label><input type="text" id="editPhone" name="phone_number"></div>
+        <div class="form-group"><label for="editSex">Sex</label><select id="editSex" name="sex"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
+        <div class="form-group"><label for="editAims">AIMS Number</label><input type="text" id="editAims" name="aims_number"></div>
+        <button type="submit" class="submit-btn">Save</button>
+      </form>
+    </div>
+    <script>
+const user = JSON.parse(localStorage.getItem('user') || 'null');
+if (!user) {
+  window.location.href = 'login.html';
+}
+    async function fetchSubmissions(type) {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const userId = user ? user.id : null;
+        let url = `http://localhost:3000/api/questionnaire-responses?type=${type}`;
+        if (userId) url += `&submitted_by=${userId}`;
+        const res = await fetch(url);
+        return await res.json();
+    }
+    function extractForecastFields(response) {
+        const answers = response.answers || {};
+        let tajneedTotal = '', motamadAttendance = '', motamadMeetings = '';
+        if (answers['Mohtamim Tajneed'] && answers['Mohtamim Tajneed']['Tajneed']) {
+            tajneedTotal = answers['Mohtamim Tajneed']['Tajneed']['Total'] || '';
+        }
+        if (answers['Motamad']) {
+            motamadAttendance = answers['Motamad']['Attendance'] || '';
+            motamadMeetings = answers['Motamad']['No. of National Amila Meetings held this month'] || '';
+        }
+        return {
+            week_number: motamadMeetings,
+            subject: motamadAttendance,
+            topic: tajneedTotal
+        };
+    }
+    function extractActivityFields(response) {
+        const answers = response.answers || {};
+        let day_of_week = '', topic = '';
+        if (answers['Mohtamim Waqar e Amal']) {
+            day_of_week = answers['Mohtamim Waqar e Amal']['No. of Majalis organised Waqar e Amal'] || '';
+            topic = answers['Mohtamim Waqar e Amal']['Total Attendance'] || '';
+        }
+        return {
+            day_of_week,
+            topic
+        };
+    }
+    function renderQuestionnaireModal(answers) {
+        const container = document.getElementById('modal-questionnaire-content');
+        container.innerHTML = '';
+        Object.entries(answers).forEach(([topic, questions]) => {
+            const topicDiv = document.createElement('div');
+            topicDiv.className = 'modal-topic';
+            const topicTitle = document.createElement('h4');
+            topicTitle.style.color = '#2563eb';
+            topicTitle.style.fontSize = '1.15em';
+            topicTitle.style.marginTop = '18px';
+            topicTitle.textContent = topic;
+            topicDiv.appendChild(topicTitle);
+            // Create a table for questions/answers
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.style.marginBottom = '18px';
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const qth = document.createElement('th');
+            qth.textContent = 'Question';
+            qth.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+            qth.style.color = '#1741a6';
+            qth.style.padding = '6px 10px';
+            qth.style.textAlign = 'left';
+            const ath = document.createElement('th');
+            ath.textContent = 'Answer';
+            ath.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+            ath.style.color = '#1741a6';
+            ath.style.padding = '6px 10px';
+            ath.style.textAlign = 'left';
+            headerRow.appendChild(qth);
+            headerRow.appendChild(ath);
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            const tbody = document.createElement('tbody');
+            let rowIdx = 0;
+            Object.entries(questions).forEach(([label, value]) => {
+                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    // Subfields: show each sub-question as a row
+                    Object.entries(value).forEach(([subLabel, subValue]) => {
+                        const row = document.createElement('tr');
+                        row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                        const qCell = document.createElement('td');
+                        qCell.textContent = label + ' - ' + subLabel;
+                        qCell.style.fontWeight = 'bold';
+                        qCell.style.padding = '6px 10px';
+                        const aCell = document.createElement('td');
+                        aCell.textContent = subValue;
+                        aCell.style.padding = '6px 10px';
+                        row.appendChild(qCell);
+                        row.appendChild(aCell);
+                        tbody.appendChild(row);
+                        rowIdx++;
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                    const qCell = document.createElement('td');
+                    qCell.textContent = label;
+                    qCell.style.fontWeight = 'bold';
+                    qCell.style.padding = '6px 10px';
+                    const aCell = document.createElement('td');
+                    aCell.textContent = value;
+                    aCell.style.padding = '6px 10px';
+                    row.appendChild(qCell);
+                    row.appendChild(aCell);
+                    tbody.appendChild(row);
+                    rowIdx++;
+                }
+            });
+            table.appendChild(tbody);
+            topicDiv.appendChild(table);
+            container.appendChild(topicDiv);
+        });
+    }
+    function openModal(answers) {
+        let parsedAnswers = answers;
+        if (typeof answers === 'string') {
+            try {
+                parsedAnswers = JSON.parse(answers);
+            } catch (e) {
+                parsedAnswers = {};
+            }
+        }
+        renderQuestionnaireModal(parsedAnswers);
+        document.getElementById('submission-modal').style.display = 'block';
+    }
+    function closeModal() {
+        document.getElementById('submission-modal').style.display = 'none';
+    }
+    async function loadMySubmissions() {
+        // Forecasts
+        const forecasts = await fetchSubmissions('forecast');
+        // Sort by submitted_at (or id) descending so newest is first
+        forecasts.sort((a, b) => {
+            const dateA = a.submitted_at ? new Date(a.submitted_at) : new Date(0);
+            const dateB = b.submitted_at ? new Date(b.submitted_at) : new Date(0);
+            if (dateA.getTime() !== dateB.getTime()) {
+                return dateB - dateA; // Most recent first
+            }
+            return (b.id || 0) - (a.id || 0); // Fallback to id
+        });
+        const tbodyF = document.getElementById('my-forecasts-body');
+        tbodyF.innerHTML = '';
+        forecasts.forEach(forecast => {
+            let dateISO = '';
+            let dateStr = '';
+            if (forecast.submitted_at) {
+                dateISO = forecast.submitted_at.split('T')[0].replace(/\//g, '-');
+                const parts = dateISO.split('-');
+                if (parts.length === 3) {
+                    dateStr = `${parts[1]}/${parts[2]}/${parts[0]}`;
+                } else {
+                    dateStr = forecast.submitted_at;
+                }
+            }
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td data-date="${dateISO}">${dateStr}</td>
+                <td>CIRCUIT</td>
+                <td>ZONE</td>
+                <td>DELIVERED</td>
+                <td class="actions-col"></td>
+            `;
+            const actionCell = tr.querySelector('td:last-child');
+            // View button
+            const viewBtn = document.createElement('button');
+            viewBtn.className = 'view-btn action-btn';
+            viewBtn.textContent = 'View';
+            viewBtn.onclick = () => openModal(forecast.answers);
+            // Download button
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'view-btn action-btn';
+            downloadBtn.textContent = 'Download';
+            downloadBtn.style.background = '#1976d2';
+            downloadBtn.style.color = '#fff';
+            downloadBtn.style.border = '1px solid #1976d2';
+            downloadBtn.style.fontWeight = 'bold';
+            downloadBtn.style.marginLeft = '4px';
+            downloadBtn.style.display = 'inline-block';
+            downloadBtn.style.width = 'auto';
+            downloadBtn.style.padding = '4px 10px';
+            downloadBtn.style.fontSize = '0.95em';
+            downloadBtn.style.minWidth = '60px';
+            downloadBtn.title = 'Download this report as PDF or CSV';
+            downloadBtn.onclick = async () => {
+                if (!window.jspdf) {
+                    if (!document.getElementById('jspdf-cdn')) {
+                        const script = document.createElement('script');
+                        script.id = 'jspdf-cdn';
+                        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                        document.head.appendChild(script);
+                        await new Promise(resolve => { script.onload = resolve; });
+                    }
+                }
+                if (!window.jspdf) {
+                    alert('PDF library failed to load.');
+                    return;
+                }
+                const choice = prompt('Enter 1 to download PDF or enter 2 to download CSV');
+                if (choice === '1') {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    let y = 18;
+                    doc.setDrawColor(44, 62, 80);
+                    doc.setLineWidth(0.8);
+                    doc.rect(8, 8, 194, 275, 'S');
+                    let reportDate = forecast.date;
+                    if (reportDate && typeof reportDate === 'string') {
+                        reportDate = reportDate.split('T')[0];
+                    } else {
+                        reportDate = '';
+                    }
+                    doc.setFontSize(18);
+                    doc.setTextColor(33, 37, 41);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(`${reportDate} REPORT`, 14, y);
+                    y += 10;
+                    doc.setFillColor(230, 240, 255);
+                    doc.setDrawColor(44, 62, 80);
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.rect(14, y-6, 50, 8, 'F');
+                    doc.text('General Info', 16, y);
+                    y += 8;
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'normal');
+                    let submittedDate = forecast.submitted_at ? String(forecast.submitted_at).split('T')[0] : '';
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Date:', 16, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(submittedDate, 46, y);
+                    y += 6;
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Circuit:', 16, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(forecast.circuit_name || '', 46, y);
+                    y += 6;
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Zone:', 16, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(forecast.zone_name || '', 46, y);
+                    y += 6;
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Region:', 16, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(forecast.region_name || '', 46, y);
+                    y += 8;
+                    doc.setFillColor(230, 240, 255);
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.rect(14, y-6, 40, 8, 'F');
+                    doc.text('Answers', 16, y);
+                    y += 8;
+                    doc.setFontSize(10);
+                    let answers = forecast.answers;
+                    if (typeof answers === 'string') {
+                        try { answers = JSON.parse(answers); } catch (e) { answers = {}; }
+                    }
+                    Object.entries(answers || {}).forEach(([topic, questions]) => {
+                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(44, 62, 80);
+                        doc.text(`${topic}:`, 18, y);
+                        y += 6;
+                        doc.setFont('helvetica', 'normal');
+                        doc.setTextColor(33, 37, 41);
+                        doc.setFillColor(220, 230, 250);
+                        doc.rect(18, y-5, 80, 7, 'F');
+                        doc.rect(98, y-5, 90, 7, 'F');
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Question', 20, y);
+                        doc.text('Answer', 100, y);
+                        y += 7;
+                        doc.setFont('helvetica', 'normal');
+                        Object.entries(questions || {}).forEach(([q, a]) => {
+                            if (typeof a === 'object' && a !== null) {
+                                Object.entries(a).forEach(([subq, suba]) => {
+                                    doc.text(`${q} > ${subq}`, 20, y);
+                                    doc.text(`${suba}`, 100, y);
+                                    y += 6;
+                                    if (y > 280) { doc.addPage(); y = 18; doc.rect(8, 8, 194, 275, 'S'); }
+                                });
+                            } else {
+                                doc.text(`${q}`, 20, y);
+                                doc.text(`${a}`, 100, y);
+                                y += 6;
+                                if (y > 280) { doc.addPage(); y = 18; doc.rect(8, 8, 194, 275, 'S'); }
+                            }
+                        });
+                        y += 2;
+                    });
+                    doc.save(`forecast-${forecast.id}.pdf`);
+                } else if (choice === '2') {
+                    const flatten = (obj, prefix = '') => Object.entries(obj).reduce((acc, [k, v]) => {
+                        const pre = prefix ? prefix + '.' : '';
+                        if (typeof v === 'object' && v !== null) Object.assign(acc, flatten(v, pre + k));
+                        else acc[pre + k] = v;
+                        return acc;
+                    }, {});
+                    const flat = flatten(forecast);
+                    const csv = Object.keys(flat).join(',') + '\n' + Object.values(flat).map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',');
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `forecast-${forecast.id}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 0);
+                }
+            };
+            viewBtn.style.display = 'inline-block';
+            downloadBtn.style.display = 'inline-block';
+            actionCell.appendChild(viewBtn);
+            actionCell.appendChild(downloadBtn);
+            actionCell.style.whiteSpace = 'nowrap';
+            tbodyF.appendChild(tr);
+        });
+        // Activities
+        const activities = await fetchSubmissions('activity');
+        // Sort by submitted_at (or id) descending so newest is first
+        activities.sort((a, b) => {
+            const dateA = a.submitted_at ? new Date(a.submitted_at) : new Date(0);
+            const dateB = b.submitted_at ? new Date(b.submitted_at) : new Date(0);
+            if (dateA.getTime() !== dateB.getTime()) {
+                return dateB - dateA; // Most recent first
+            }
+            return (b.id || 0) - (a.id || 0); // Fallback to id
+        });
+        const tbodyA = document.getElementById('my-activities-body');
+        tbodyA.innerHTML = '';
+        activities.forEach(activity => {
+            let dateISO = '';
+            let dateStr = '';
+            if (activity.submitted_at) {
+                dateISO = activity.submitted_at.split('T')[0].replace(/\//g, '-');
+                const parts = dateISO.split('-');
+                if (parts.length === 3) {
+                    dateStr = `${parts[1]}/${parts[2]}/${parts[0]}`;
+                } else {
+                    dateStr = activity.submitted_at;
+                }
+            }
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td data-date="${dateISO}">${dateStr}</td>
+                <td>CIRCUIT</td>
+                <td>ZONE</td>
+                <td>DELIVERED</td>
+                <td class="actions-col"></td>
+            `;
+            const actionCell = tr.querySelector('td:last-child');
+            // View button
+            const viewBtn = document.createElement('button');
+            viewBtn.className = 'view-btn action-btn';
+            viewBtn.textContent = 'View';
+            viewBtn.onclick = () => openModal(activity.answers);
+            // Download button
+            const downloadBtn = document.createElement('button');
+            downloadBtn.className = 'view-btn action-btn';
+            downloadBtn.textContent = 'Download';
+            downloadBtn.style.background = '#1976d2';
+            downloadBtn.style.color = '#fff';
+            downloadBtn.style.border = '1px solid #1976d2';
+            downloadBtn.style.fontWeight = 'bold';
+            downloadBtn.style.marginLeft = '4px';
+            downloadBtn.style.display = 'inline-block';
+            downloadBtn.style.width = 'auto';
+            downloadBtn.style.padding = '4px 10px';
+            downloadBtn.style.fontSize = '0.95em';
+            downloadBtn.style.minWidth = '60px';
+            downloadBtn.title = 'Download this report as PDF or CSV';
+            downloadBtn.onclick = async () => {
+                if (!window.jspdf) {
+                    if (!document.getElementById('jspdf-cdn')) {
+                        const script = document.createElement('script');
+                        script.id = 'jspdf-cdn';
+                        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                        document.head.appendChild(script);
+                        await new Promise(resolve => { script.onload = resolve; });
+                    }
+                }
+                if (!window.jspdf) {
+                    alert('PDF library failed to load.');
+                    return;
+                }
+                const choice = prompt('Enter 1 to download PDF or enter 2 to download CSV');
+                if (choice === '1') {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    let y = 18;
+                    doc.setDrawColor(44, 62, 80);
+                    doc.setLineWidth(0.8);
+                    doc.rect(8, 8, 194, 275, 'S');
+                    let reportDate = activity.date;
+                    if (reportDate && typeof reportDate === 'string') {
+                        reportDate = reportDate.split('T')[0];
+                    } else {
+                        reportDate = '';
+                    }
+                    doc.setFontSize(18);
+                    doc.setTextColor(33, 37, 41);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(`${reportDate} REPORT`, 14, y);
+                    y += 10;
+                    doc.setFillColor(230, 240, 255);
+                    doc.setDrawColor(44, 62, 80);
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.rect(14, y-6, 50, 8, 'F');
+                    doc.text('General Info', 16, y);
+                    y += 8;
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'normal');
+                    let submittedDate = activity.submitted_at ? String(activity.submitted_at).split('T')[0] : '';
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Date:', 16, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(submittedDate, 46, y);
+                    y += 6;
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Circuit:', 16, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(activity.circuit_name || '', 46, y);
+                    y += 6;
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Zone:', 16, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(activity.zone_name || '', 46, y);
+                    y += 6;
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Region:', 16, y);
+                    doc.setFont('helvetica', 'normal');
+                    doc.text(activity.region_name || '', 46, y);
+                    y += 8;
+                    doc.setFillColor(230, 240, 255);
+                    doc.setFontSize(12);
+                    doc.setFont('helvetica', 'bold');
+                    doc.rect(14, y-6, 40, 8, 'F');
+                    doc.text('Answers', 16, y);
+                    y += 8;
+                    doc.setFontSize(10);
+                    let answers = activity.answers;
+                    if (typeof answers === 'string') {
+                        try { answers = JSON.parse(answers); } catch (e) { answers = {}; }
+                    }
+                    Object.entries(answers || {}).forEach(([topic, questions]) => {
+                        doc.setFont('helvetica', 'bold');
+                        doc.setTextColor(44, 62, 80);
+                        doc.text(`${topic}:`, 18, y);
+                        y += 6;
+                        doc.setFont('helvetica', 'normal');
+                        doc.setTextColor(33, 37, 41);
+                        doc.setFillColor(220, 230, 250);
+                        doc.rect(18, y-5, 80, 7, 'F');
+                        doc.rect(98, y-5, 90, 7, 'F');
+                        doc.setFont('helvetica', 'bold');
+                        doc.text('Question', 20, y);
+                        doc.text('Answer', 100, y);
+                        y += 7;
+                        doc.setFont('helvetica', 'normal');
+                        Object.entries(questions || {}).forEach(([q, a]) => {
+                            if (typeof a === 'object' && a !== null) {
+                                Object.entries(a).forEach(([subq, suba]) => {
+                                    doc.text(`${q} > ${subq}`, 20, y);
+                                    doc.text(`${suba}`, 100, y);
+                                    y += 6;
+                                    if (y > 280) { doc.addPage(); y = 18; doc.rect(8, 8, 194, 275, 'S'); }
+                                });
+                            } else {
+                                doc.text(`${q}`, 20, y);
+                                doc.text(`${a}`, 100, y);
+                                y += 6;
+                                if (y > 280) { doc.addPage(); y = 18; doc.rect(8, 8, 194, 275, 'S'); }
+                            }
+                        });
+                        y += 2;
+                    });
+                    doc.save(`activity-${activity.id}.pdf`);
+                } else if (choice === '2') {
+                    const flatten = (obj, prefix = '') => Object.entries(obj).reduce((acc, [k, v]) => {
+                        const pre = prefix ? prefix + '.' : '';
+                        if (typeof v === 'object' && v !== null) Object.assign(acc, flatten(v, pre + k));
+                        else acc[pre + k] = v;
+                        return acc;
+                    }, {});
+                    const flat = flatten(activity);
+                    const csv = Object.keys(flat).join(',') + '\n' + Object.values(flat).map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',');
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `activity-${activity.id}.csv`;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 0);
+                }
+            };
+            viewBtn.style.display = 'inline-block';
+            downloadBtn.style.display = 'inline-block';
+            actionCell.appendChild(viewBtn);
+            actionCell.appendChild(downloadBtn);
+            actionCell.style.whiteSpace = 'nowrap';
+            tbodyA.appendChild(tr);
+        });
+    }
+    function filterTableByDateRange(tableBodySelector, fromId, toId) {
+        const from = document.getElementById(fromId).value;
+        const to = document.getElementById(toId).value;
+        document.querySelectorAll(tableBodySelector + ' tr').forEach(row => {
+            const dateCell = row.children[0];
+            const rowDate = dateCell ? dateCell.getAttribute('data-date') : '';
+            let show = true;
+            if (from && (!rowDate || rowDate < from)) show = false;
+            if (to && (!rowDate || rowDate > to)) show = false;
+            row.style.display = show ? '' : 'none';
+        });
+    }
+    document.addEventListener('DOMContentLoaded', loadMySubmissions);
+    document.getElementById('forecast-date-from').addEventListener('input', function() {
+        filterTableByDateRange('#my-forecasts-body', 'forecast-date-from', 'forecast-date-to');
+    });
+    document.getElementById('forecast-date-to').addEventListener('input', function() {
+        filterTableByDateRange('#my-forecasts-body', 'forecast-date-from', 'forecast-date-to');
+    });
+    document.getElementById('clear-forecast-date').addEventListener('click', function() {
+        document.getElementById('forecast-date-from').value = '';
+        document.getElementById('forecast-date-to').value = '';
+        document.querySelectorAll('#my-forecasts-body tr').forEach(row => { row.style.display = ''; });
+    });
+    document.getElementById('activity-date-from').addEventListener('input', function() {
+        filterTableByDateRange('#my-activities-body', 'activity-date-from', 'activity-date-to');
+    });
+    document.getElementById('activity-date-to').addEventListener('input', function() {
+        filterTableByDateRange('#my-activities-body', 'activity-date-from', 'activity-date-to');
+    });
+    document.getElementById('clear-activity-date').addEventListener('click', function() {
+        document.getElementById('activity-date-from').value = '';
+        document.getElementById('activity-date-to').value = '';
+        document.querySelectorAll('#my-activities-body tr').forEach(row => { row.style.display = ''; });
+    });
+    // Profile Modal Logic
+    const profileIconBtn = document.getElementById('profileIconBtn');
+    const profileModal = document.getElementById('profileModal');
+    const profileModalBackdrop = document.getElementById('profileModalBackdrop');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+    profileIconBtn.onclick = () => {
+      profileModal.style.display = 'flex';
+      profileModalBackdrop.style.display = 'block';
+      // Populate username and assignment
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('profileUsername').textContent = user.name ? `Username: ${user.name}` : '';
+      let assignment = '';
+      if (user.circuit_id) assignment += `Circuit ID: ${user.circuit_id}  `;
+      if (user.zone_id) assignment += `Zone ID: ${user.zone_id}  `;
+      if (user.region_id) assignment += `Region ID: ${user.region_id}`;
+      document.getElementById('profileAssignment').textContent = assignment || '';
+    };
+    profileModalBackdrop.onclick = closeProfileModal.onclick = () => {
+      profileModal.style.display = 'none';
+      profileModalBackdrop.style.display = 'none';
+    };
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    };
+    document.getElementById('editProfileBtn').onclick = function() {
+      alert('Edit profile functionality coming soon!');
+    };
+    document.getElementById('changePassBtn').onclick = function() {
+      alert('Change password functionality coming soon!');
+    };
+    // Profile Edit Modal Logic
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditModalBackdrop = document.getElementById('profileEditModalBackdrop');
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const closeEditModal = document.getElementById('closeEditModal');
+    const profileEditForm = document.getElementById('profileEditForm');
+    editProfileBtn.onclick = function() {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('editDob').value = user.dob || '';
+      document.getElementById('editPhone').value = user.phone_number || '';
+      document.getElementById('editSex').value = user.sex || '';
+      document.getElementById('editAims').value = user.aims_number || '';
+      profileEditModal.style.display = 'flex';
+      profileEditModalBackdrop.style.display = 'block';
+    };
+    closeEditModal.onclick = profileEditModalBackdrop.onclick = function() {
+      profileEditModal.style.display = 'none';
+      profileEditModalBackdrop.style.display = 'none';
+    };
+    profileEditForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const dob = document.getElementById('editDob').value;
+      const phone_number = document.getElementById('editPhone').value;
+      const sex = document.getElementById('editSex').value;
+      const aims_number = document.getElementById('editAims').value;
+      const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dob, phone_number, sex, aims_number })
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        Object.assign(user, { dob, phone_number, sex, aims_number });
+        localStorage.setItem('user', JSON.stringify(user));
+        alert('Profile updated!');
+        profileEditModal.style.display = 'none';
+        profileEditModalBackdrop.style.display = 'none';
+      } else {
+        alert('Failed to update profile.');
+      }
+    };
+    </script>
+</body>
+</html> 

@@ -22,9 +22,17 @@
                 <span class="nav-icon">📝</span>
                 Weekly Activities
             </a>
+            <a href="my-submissions.html" class="nav-link">
+                <span class="nav-icon">📄</span>
+                My Submissions
+            </a>
             <a href="office-response.html" class="nav-link active">
                 <span class="nav-icon">📬</span>
                 Office Response
+            </a>
+            <a href="settings.html" class="nav-link">
+                <span class="nav-icon">⚙️</span>
+                Settings
             </a>
         </nav>
     </div>
@@ -115,6 +123,105 @@
             </div>
         </div>
     </div>
+    <!-- Profile Icon Button -->
+    <button class="profile-icon-btn" id="profileIconBtn" title="Profile" style="position:fixed;top:18px;right:24px;z-index:100;">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#2563eb"/></svg>
+    </button>
+    <!-- Profile Modal Backdrop and Modal -->
+    <div class="profile-modal-backdrop" id="profileModalBackdrop"></div>
+    <div class="profile-modal" id="profileModal" style="display:none;">
+      <button class="close-profile-modal" id="closeProfileModal">&times;</button>
+      <div class="profile-avatar">
+        <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#fff"/></svg>
+      </div>
+      <div class="profile-username" id="profileUsername" style="text-align:center;font-weight:600;font-size:1.1em;margin-top:8px;"></div>
+      <div class="profile-assignment" id="profileAssignment" style="text-align:center;font-size:0.98em;color:#2563eb;margin-bottom:8px;"></div>
+      <div class="profile-btn-row">
+        <button id="editProfileBtn">EDIT</button>
+        <button id="changePassBtn">PASS</button>
+      </div>
+      <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+    </div>
+    <!-- Profile Edit Modal -->
+    <div class="profile-edit-modal-backdrop" id="profileEditModalBackdrop"></div>
+    <div class="profile-edit-modal" id="profileEditModal" style="display:none;">
+      <button class="close-edit-modal" id="closeEditModal">&times;</button>
+      <h2>Edit Profile</h2>
+      <form id="profileEditForm">
+        <div class="form-group"><label for="editDob">Date of Birth</label><input type="date" id="editDob" name="dob"></div>
+        <div class="form-group"><label for="editPhone">Phone Number</label><input type="text" id="editPhone" name="phone_number"></div>
+        <div class="form-group"><label for="editSex">Sex</label><select id="editSex" name="sex"><option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
+        <div class="form-group"><label for="editAims">AIMS Number</label><input type="text" id="editAims" name="aims_number"></div>
+        <button type="submit" class="submit-btn">Save</button>
+      </form>
+    </div>
+    <script>
+    // Profile Modal Logic
+    const profileIconBtn = document.getElementById('profileIconBtn');
+    const profileModal = document.getElementById('profileModal');
+    const profileModalBackdrop = document.getElementById('profileModalBackdrop');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+    profileIconBtn.onclick = () => {
+      profileModal.style.display = 'flex';
+      profileModalBackdrop.style.display = 'block';
+      // Populate username and assignment
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('profileUsername').textContent = user.name ? `Username: ${user.name}` : '';
+      let assignment = '';
+      if (user.circuit_id) assignment += `Circuit ID: ${user.circuit_id}  `;
+      if (user.zone_id) assignment += `Zone ID: ${user.zone_id}  `;
+      if (user.region_id) assignment += `Region ID: ${user.region_id}`;
+      document.getElementById('profileAssignment').textContent = assignment || '';
+    };
+    profileModalBackdrop.onclick = closeProfileModal.onclick = () => {
+      profileModal.style.display = 'none';
+      profileModalBackdrop.style.display = 'none';
+    };
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.removeItem('user');
+      window.location.href = 'login.html';
+    };
+    document.getElementById('editProfileBtn').onclick = function() {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('editDob').value = user.dob || '';
+      document.getElementById('editPhone').value = user.phone_number || '';
+      document.getElementById('editSex').value = user.sex || '';
+      document.getElementById('editAims').value = user.aims_number || '';
+      profileEditModal.style.display = 'flex';
+      profileEditModalBackdrop.style.display = 'block';
+    };
+    document.getElementById('changePassBtn').onclick = function() {
+      alert('Change password functionality coming soon!');
+    };
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditModalBackdrop = document.getElementById('profileEditModalBackdrop');
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const closeEditModal = document.getElementById('closeEditModal');
+    const profileEditForm = document.getElementById('profileEditForm');
+    profileEditForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const dob = document.getElementById('editDob').value;
+      const phone_number = document.getElementById('editPhone').value;
+      const sex = document.getElementById('editSex').value;
+      const aims_number = document.getElementById('editAims').value;
+      const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dob, phone_number, sex, aims_number })
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        Object.assign(user, { dob, phone_number, sex, aims_number });
+        localStorage.setItem('user', JSON.stringify(user));
+        alert('Profile updated!');
+        profileEditModal.style.display = 'none';
+        profileEditModalBackdrop.style.display = 'none';
+      } else {
+        alert('Failed to update profile.');
+      }
+    };
+    </script>
     <script src="api.js"></script>
     <script src="script.js"></script>
 </body>

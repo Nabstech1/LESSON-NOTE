@@ -149,85 +149,76 @@ function initializeDashboard() {
 }
 
 // Review Functions
+// Helper to extract key fields from answers JSON for forecasts
+function extractForecastFields(response) {
+    const answers = response.answers || {};
+    // Extract some meaningful fields for the table
+    // Example: Tajneed Total, Motamad Attendance, Motamad No. of National Amila Meetings held this month
+    let tajneedTotal = '', motamadAttendance = '', motamadMeetings = '';
+    if (answers['Mohtamim Tajneed'] && answers['Mohtamim Tajneed']['Tajneed']) {
+        tajneedTotal = answers['Mohtamim Tajneed']['Tajneed']['Total'] || '';
+    }
+    if (answers['Motamad']) {
+        motamadAttendance = answers['Motamad']['Attendance'] || '';
+        motamadMeetings = answers['Motamad']['No. of National Amila Meetings held this month'] || '';
+    }
+    return {
+        week_number: motamadMeetings, // Use as week/period
+        subject: motamadAttendance,   // Use as subject
+        topic: tajneedTotal           // Use as topic/summary
+    };
+}
+
+// Helper to extract key fields from answers JSON for activities
+function extractActivityFields(response) {
+    const answers = response.answers || {};
+    // Example: extract day, topic from answers (customize as needed)
+    let day_of_week = '', topic = '';
+    if (answers['Mohtamim Waqar e Amal']) {
+        day_of_week = answers['Mohtamim Waqar e Amal']['No. of Majalis organised Waqar e Amal'] || '';
+        topic = answers['Mohtamim Waqar e Amal']['Total Attendance'] || '';
+    }
+    return {
+        day_of_week,
+        topic
+    };
+}
+
+// Fetch and display forecasts from new endpoint
 async function loadForecasts() {
     try {
         const tbody = document.getElementById('forecasts-table-body');
-        if (!tbody) {
-            console.error('Forecasts table body not found');
-            return;
-        }
-
-        // Show loading state
+        if (!tbody) return;
         tbody.innerHTML = '<tr><td colspan="7" class="loading-state">Loading forecasts...</td></tr>';
-
-        // Get all classes
-        const classes = await api.getAllClasses();
-        console.log('Loaded classes:', classes);
-        
-        let allForecasts = [];
-        
-        // Fetch forecasts for each class
-        for (const classInfo of classes) {
-            try {
-                const forecasts = await api.getForecastsForClass(classInfo.id);
-                console.log(`Loaded forecasts for class ${classInfo.class_name}:`, forecasts);
-                
-                // Add class info to each forecast
-                if (Array.isArray(forecasts)) {
-                    forecasts.forEach(forecast => {
-                        // Ensure class info is properly set
-                        forecast.class_name = classInfo.class_name;
-                        forecast.section = classInfo.section;
-                        forecast.class_id = classInfo.id;
-                        
-                        // Log the forecast after adding class info
-                        console.log('Processed forecast:', forecast);
-                    });
-                    allForecasts = allForecasts.concat(forecasts);
-                }
-            } catch (error) {
-                console.error(`Error fetching forecasts for class ${classInfo.class_name}:`, error);
-            }
-        }
-
-        console.log('Total forecasts loaded:', allForecasts.length);
-        console.log('All forecasts:', allForecasts);
-
-        // Clear loading state and populate table
+        const res = await fetch('http://localhost:3000/api/questionnaire-responses?type=forecast&stage=admin');
+        const allForecasts = await res.json();
         tbody.innerHTML = '';
-        if (allForecasts.length === 0) {
+        if (!allForecasts.length) {
             tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No forecasts found</td></tr>';
             return;
         }
-
-        // Sort forecasts by submission date (newest first)
-        allForecasts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
         allForecasts.forEach(forecast => {
+            const keyFields = extractForecastFields(forecast);
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${forecast.week_number || 'N/A'}</td>
-                <td>${forecast.class_name || 'N/A'}</td>
-                <td>${forecast.section || 'SINGLE'}</td>
-                <td>${forecast.subject || 'N/A'}</td>
-                <td>${forecast.topic || 'N/A'}</td>
+                <td>${keyFields.week_number || 'N/A'}</td>
+                <td>${forecast.class_id || 'N/A'}</td>
+                <td>${forecast.section || 'N/A'}</td>
+                <td>${keyFields.subject || 'N/A'}</td>
+                <td>${keyFields.topic || 'N/A'}</td>
                 <td>
                     <span class="status-badge ${forecast.admin_review ? 'reviewed' : 'pending'}">
                         ${forecast.admin_review ? 'Reviewed' : 'Pending'}
                     </span>
                 </td>
                 <td>
-                    <button class="review-btn" onclick="openReviewModal('forecast', ${forecast.id})">
-                        ${forecast.admin_review ? 'Edit Review' : 'Review'}
-                    </button>
+                    <button class="edit-btn" onclick="openEditModal('forecast', ${forecast.id})">EDIT</button>
+                    <button class="view-btn" onclick="openViewModal('forecast', ${forecast.id})">VIEW</button>
                 </td>
             `;
             tbody.appendChild(row);
         });
-
-        // Update filter counts
         updateFilterCounts('forecasts', allForecasts);
-
     } catch (error) {
         console.error('Error loading forecasts:', error);
         const tbody = document.getElementById('forecasts-table-body');
@@ -237,80 +228,40 @@ async function loadForecasts() {
     }
 }
 
-// Load activities for review
+// Fetch and display activities from new endpoint
 async function loadActivities() {
     try {
         const tbody = document.getElementById('activities-table-body');
-        if (!tbody) {
-            console.error('Activities table body not found');
-            return;
-        }
-        
-        // Show loading state
+        if (!tbody) return;
         tbody.innerHTML = '<tr><td colspan="7" class="loading-state">Loading activities...</td></tr>';
-        
-        // Get all classes
-        const classes = await api.getAllClasses();
-        console.log('Loaded classes:', classes);
-        
-        let allActivities = [];
-        
-        // Fetch activities for each class
-        for (const classInfo of classes) {
-            try {
-                const activities = await api.getActivitiesForClass(classInfo.id);
-                console.log(`Loaded activities for class ${classInfo.class_name}:`, activities);
-                
-                // Add class info to each activity
-                if (Array.isArray(activities)) {
-                    activities.forEach(activity => {
-                        activity.class_name = classInfo.class_name;
-                        activity.section = classInfo.section || 'SINGLE';
-                    });
-                    allActivities = allActivities.concat(activities);
-                }
-            } catch (error) {
-                console.error(`Error fetching activities for class ${classInfo.class_name}:`, error);
-            }
-        }
-        
-        console.log('Total activities loaded:', allActivities.length);
-
-        // Clear loading state and populate table
+        const res = await fetch('http://localhost:3000/api/questionnaire-responses?type=activity&stage=admin');
+        const allActivities = await res.json();
         tbody.innerHTML = '';
-        if (allActivities.length === 0) {
+        if (!allActivities.length) {
             tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No activities found</td></tr>';
             return;
         }
-        
-        // Sort activities by submission date (newest first)
-        allActivities.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        
         allActivities.forEach(activity => {
+            const keyFields = extractActivityFields(activity);
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${activity.day_of_week || 'N/A'}</td>
-                <td>${activity.class_name || 'N/A'}</td>
+                <td>${keyFields.day_of_week || 'N/A'}</td>
+                <td>${activity.class_id || 'N/A'}</td>
                 <td>${activity.section || 'N/A'}</td>
-                <td>${activity.topic || 'N/A'}</td>
-                <td>${activity.rpk || 'N/A'}</td>
+                <td>${keyFields.topic || 'N/A'}</td>
                 <td>
                     <span class="status-badge ${activity.admin_review ? 'reviewed' : 'pending'}">
                         ${activity.admin_review ? 'Reviewed' : 'Pending'}
                     </span>
                 </td>
                 <td>
-                    <button class="review-btn" onclick="openReviewModal('activity', ${activity.id})">
-                        ${activity.admin_review ? 'Edit Review' : 'Review'}
-                    </button>
+                    <button class="edit-btn" onclick="openEditModal('activity', ${activity.id})">EDIT</button>
+                    <button class="view-btn" onclick="openViewModal('activity', ${activity.id})">VIEW</button>
                 </td>
             `;
             tbody.appendChild(row);
         });
-        
-        // Update filter counts
         updateFilterCounts('activities', allActivities);
-        
     } catch (error) {
         console.error('Error loading activities:', error);
         const tbody = document.getElementById('activities-table-body');
@@ -360,134 +311,80 @@ function closeModal() {
 
 async function loadItemDetails(type, id) {
     try {
-        console.log(`Loading ${type} details for ID:`, id);
-        
         // Show loading state in modal elements
         const elements = {
             'modal-class': 'Loading...',
             'modal-section': 'Loading...',
-            'modal-day': 'Loading...',
+            'modal-week_number': 'Loading...',
+            'modal-subject': 'Loading...',
             'modal-topic': 'Loading...',
             'modal-subtopic': 'Loading...',
-            'modal-rpk': 'Loading...',
-            'modal-objectives': 'Loading...',
-            'modal-material': 'Loading...'
+            'modal-material': 'Loading...',
+            'modal-date': 'Loading...',
+            'modal-created_at': 'Loading...',
+            'modal-updated_at': 'Loading...'
         };
-        
         Object.entries(elements).forEach(([id, value]) => {
             const element = document.getElementById(id);
             if (element) {
                 element.textContent = value;
             }
         });
-        
         // Use the correct API functions from the api object
         let item;
-        try {
-            item = type == 'activity' 
-                ? await api.getActivity(id)
-                : await api.getForecast(id);
-
-            console.log('Loaded item details:', item);
-
-            // if (!item || typeof item !== 'object') {
-            //     throw new Error(`${type} not found or invalid response`);
-            // }
-        } catch (error) {
-            console.error('Error fetching item:', error);
-            throw error;
+        if (type === 'activity') {
+            item = await api.getActivity(id);
+        } else {
+            item = await api.getForecast(id);
         }
-
-        // Update modal content with the actual data
-        // if (type == 'forecast') {
-            // const updatedElements = {
-            //     'modal-class': item.class_name,
-            //     'modal-section': item.section,
-            //     'modal-day': item.week_number,
-            //     'modal-topic': item.topic,
-            //     'modal-subtopic': item.subtopic,
-            //     'modal-material': item.material
-            // };
-
-            // Update each element with fallback to 'N/A' only if value is null or undefined
-            // Object.entries(updatedElements).forEach(([id, value]) => {
-            //     const element = document.getElementById(id);
-            //     if (element) {
-            //         element.textContent = value || 'N/A';
-            //     }
-            // });
-        // } else {
-            // For activities
-            const updatedElements = {
-                'modal-class': item.class_name,
-                'modal-section': item.section,
-                'modal-day': item.day_of_week,
-                'modal-topic': item.topic,
-                'modal-subtopic': item.subtopic,
-                'modal-rpk': item.rpk,
-                'modal-objectives': item.objectives,
-                'modal-material': item.material
-            };
-
-            // Update each element with fallback to 'N/A' only if value is null or undefined
-            Object.entries(updatedElements).forEach(([id, value]) => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.textContent = value || 'N/A';
-                }
-            });
-        // }
-
-        // If there's an existing review, populate the form
-        const ratingInput = document.getElementById('rating');
-        const feedbackInput = document.getElementById('feedback');
-        
-        if (ratingInput && item.rating) {
-            ratingInput.value = item.rating;
-        }
-        if (feedbackInput && item.admin_feedback) {
-            feedbackInput.value = item.admin_feedback;
-        }
-
-        // Enable review form
-        if (ratingInput) ratingInput.disabled = false;
-        if (feedbackInput) feedbackInput.disabled = false;
-        
-        const submitButton = document.querySelector('.submit-btn');
-        if (submitButton) submitButton.disabled = false;
-
+        // Map backend data to modal fields
+        const updatedElements = {
+            'modal-class': item.class_name,
+            'modal-section': item.section,
+            'modal-week_number': item.week_number,
+            'modal-subject': item.subject,
+            'modal-topic': item.topic,
+            'modal-subtopic': item.subtopic,
+            'modal-material': item.material,
+            'modal-date': item.date ? item.date.split('T')[0] : '',
+            'modal-created_at': item.created_at ? item.created_at.split('T')[0] : '',
+            'modal-updated_at': item.updated_at ? item.updated_at.split('T')[0] : ''
+        };
+        Object.entries(updatedElements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = (value !== undefined && value !== null && value !== '') ? value : 'N/A';
+            }
+        });
+        // Also populate input fields for edit mode
+        if (document.getElementById('input-week_number')) document.getElementById('input-week_number').value = item.week_number || '';
+        if (document.getElementById('input-subject')) document.getElementById('input-subject').value = item.subject || '';
+        if (document.getElementById('input-topic')) document.getElementById('input-topic').value = item.topic || '';
+        if (document.getElementById('input-subtopic')) document.getElementById('input-subtopic').value = item.subtopic || '';
+        if (document.getElementById('input-material')) document.getElementById('input-material').value = item.material || '';
+        if (document.getElementById('input-date')) document.getElementById('input-date').value = item.date ? item.date.split('T')[0] : '';
     } catch (error) {
-        console.error('Error loading item details:', error);
-        
         // Show error in modal elements
         const errorElements = {
             'modal-class': '---',
             'modal-section': '---',
-            'modal-day': '---',
+            'modal-week_number': '---',
+            'modal-subject': '---',
             'modal-topic': error.message || 'Error loading details',
             'modal-subtopic': type === 'forecast' 
                 ? 'This forecast may have been deleted or not yet submitted.'
                 : 'This activity may have been deleted or not yet submitted.',
-            'modal-rpk': '---',
-            'modal-objectives': '---',
-            'modal-material': '---'
+            'modal-material': '---',
+            'modal-date': '---',
+            'modal-created_at': '---',
+            'modal-updated_at': '---'
         };
-        
         Object.entries(errorElements).forEach(([id, value]) => {
             const element = document.getElementById(id);
             if (element) {
                 element.textContent = value;
             }
         });
-        
-        // Disable review form on error
-        const ratingInput = document.getElementById('rating');
-        const feedbackInput = document.getElementById('feedback');
-        const submitButton = document.querySelector('.submit-btn');
-        
-        if (ratingInput) ratingInput.disabled = true;
-        if (feedbackInput) feedbackInput.disabled = true;
-        if (submitButton) submitButton.disabled = true;
     }
 }
 
@@ -579,6 +476,307 @@ function saveSettings() {
     localStorage.setItem('adminSettings', JSON.stringify(settings));
     alert('Settings saved successfully!');
 }
+
+// Add modal logic for EDIT and VIEW
+// Helper to render all questionnaire data in a modal as a table
+function renderQuestionnaireModal(answers, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    Object.entries(answers).forEach(([topic, questions]) => {
+        const topicDiv = document.createElement('div');
+        topicDiv.className = 'modal-topic';
+        const topicTitle = document.createElement('h4');
+        topicTitle.style.color = '#2563eb';
+        topicTitle.style.fontSize = '1.15em';
+        topicTitle.style.marginTop = '18px';
+        topicTitle.textContent = topic;
+        topicDiv.appendChild(topicTitle);
+        // Create a table for questions/answers
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.marginBottom = '18px';
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const qth = document.createElement('th');
+        qth.textContent = 'Question';
+        qth.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+        qth.style.color = '#1741a6';
+        qth.style.padding = '6px 10px';
+        qth.style.textAlign = 'left';
+        const ath = document.createElement('th');
+        ath.textContent = 'Answer';
+        ath.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+        ath.style.color = '#1741a6';
+        ath.style.padding = '6px 10px';
+        ath.style.textAlign = 'left';
+        headerRow.appendChild(qth);
+        headerRow.appendChild(ath);
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        let rowIdx = 0;
+        Object.entries(questions).forEach(([label, value]) => {
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                // Subfields: show each sub-question as a row
+                Object.entries(value).forEach(([subLabel, subValue]) => {
+                    const row = document.createElement('tr');
+                    row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                    const qCell = document.createElement('td');
+                    qCell.textContent = label + ' - ' + subLabel;
+                    qCell.style.fontWeight = 'bold';
+                    qCell.style.padding = '6px 10px';
+                    const aCell = document.createElement('td');
+                    aCell.textContent = subValue;
+                    aCell.style.padding = '6px 10px';
+                    row.appendChild(qCell);
+                    row.appendChild(aCell);
+                    tbody.appendChild(row);
+                    rowIdx++;
+                });
+            } else {
+                const row = document.createElement('tr');
+                row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                const qCell = document.createElement('td');
+                qCell.textContent = label;
+                qCell.style.fontWeight = 'bold';
+                qCell.style.padding = '6px 10px';
+                const aCell = document.createElement('td');
+                aCell.textContent = value;
+                aCell.style.padding = '6px 10px';
+                row.appendChild(qCell);
+                row.appendChild(aCell);
+                tbody.appendChild(row);
+                rowIdx++;
+            }
+        });
+        table.appendChild(tbody);
+        topicDiv.appendChild(table);
+        container.appendChild(topicDiv);
+    });
+}
+
+// Update modal logic to show all questionnaire data as a table
+async function openViewModal(type, id) {
+    try {
+        const modal = document.getElementById('review-modal');
+        modal.style.display = 'block';
+        // Fetch the response
+        const res = await fetch(`http://localhost:3000/api/questionnaire-responses?type=${type === 'forecast' ? 'forecast' : 'activity'}`);
+        const allResponses = await res.json();
+        const item = allResponses.find(r => r.id === id || r.id === Number(id));
+        if (!item) throw new Error('Item not found');
+        // Parse answers if needed
+        let parsedAnswers = item.answers;
+        if (typeof parsedAnswers === 'string') {
+            try {
+                parsedAnswers = JSON.parse(parsedAnswers);
+            } catch (e) {
+                parsedAnswers = {};
+            }
+        }
+        renderQuestionnaireModal(parsedAnswers, 'modal-questionnaire-content');
+    } catch (error) {
+        alert('Failed to load details.');
+    }
+}
+// Helper to render questionnaire as editable table
+function renderEditableQuestionnaireModal(answers, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    Object.entries(answers).forEach(([topic, questions]) => {
+        const topicDiv = document.createElement('div');
+        topicDiv.className = 'modal-topic';
+        const topicTitle = document.createElement('h4');
+        topicTitle.style.color = '#2563eb';
+        topicTitle.style.fontSize = '1.15em';
+        topicTitle.style.marginTop = '18px';
+        topicTitle.textContent = topic;
+        topicDiv.appendChild(topicTitle);
+        // Create a table for questions/answers
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.marginBottom = '18px';
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const qth = document.createElement('th');
+        qth.textContent = 'Question';
+        qth.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+        qth.style.color = '#1741a6';
+        qth.style.padding = '6px 10px';
+        qth.style.textAlign = 'left';
+        const ath = document.createElement('th');
+        ath.textContent = 'Answer';
+        ath.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+        ath.style.color = '#1741a6';
+        ath.style.padding = '6px 10px';
+        ath.style.textAlign = 'left';
+        headerRow.appendChild(qth);
+        headerRow.appendChild(ath);
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        let rowIdx = 0;
+        Object.entries(questions).forEach(([label, value]) => {
+            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                // Subfields: show each sub-question as a row
+                Object.entries(value).forEach(([subLabel, subValue]) => {
+                    const row = document.createElement('tr');
+                    row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                    const qCell = document.createElement('td');
+                    qCell.textContent = label + ' - ' + subLabel;
+                    qCell.style.fontWeight = 'bold';
+                    qCell.style.padding = '6px 10px';
+                    const aCell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = subValue;
+                    input.style.width = '100%';
+                    input.style.padding = '4px 8px';
+                    input.dataset.topic = topic;
+                    input.dataset.label = label;
+                    input.dataset.sublabel = subLabel;
+                    aCell.appendChild(input);
+                    aCell.style.padding = '6px 10px';
+                    row.appendChild(qCell);
+                    row.appendChild(aCell);
+                    tbody.appendChild(row);
+                    rowIdx++;
+                });
+            } else {
+                const row = document.createElement('tr');
+                row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                const qCell = document.createElement('td');
+                qCell.textContent = label;
+                qCell.style.fontWeight = 'bold';
+                qCell.style.padding = '6px 10px';
+                const aCell = document.createElement('td');
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = value;
+                input.style.width = '100%';
+                input.style.padding = '4px 8px';
+                input.dataset.topic = topic;
+                input.dataset.label = label;
+                aCell.appendChild(input);
+                aCell.style.padding = '6px 10px';
+                row.appendChild(qCell);
+                row.appendChild(aCell);
+                tbody.appendChild(row);
+                rowIdx++;
+            }
+        });
+        table.appendChild(tbody);
+        topicDiv.appendChild(table);
+        container.appendChild(topicDiv);
+    });
+}
+
+// Open modal in edit mode
+async function openEditModal(type, id) {
+    try {
+        const modal = document.getElementById('review-modal');
+        modal.style.display = 'block';
+        // Fetch the response
+        const res = await fetch(`http://localhost:3000/api/questionnaire-responses?type=${type === 'forecast' ? 'forecast' : 'activity'}`);
+        const allResponses = await res.json();
+        console.log('Fetched responses:', allResponses);
+        console.log('Looking for id:', id);
+        const item = allResponses.find(r => r.id === id || r.id === Number(id));
+        if (!item) throw new Error('Item not found');
+        // Parse answers if needed
+        let parsedAnswers = item.answers;
+        if (typeof parsedAnswers === 'string') {
+            try {
+                parsedAnswers = JSON.parse(parsedAnswers);
+            } catch (e) {
+                parsedAnswers = {};
+            }
+        }
+        // Render editable questionnaire
+        renderEditableQuestionnaireModal(parsedAnswers, 'modal-questionnaire-content');
+        // Add Save button
+        const modalFooter = document.getElementById('modal-footer');
+        if (modalFooter) {
+            modalFooter.innerHTML = `<button class="submit-btn" onclick="saveEditedAnswers('${type}', ${id})">Save</button>`;
+        }
+    } catch (error) {
+        alert('Failed to load details.');
+    }
+}
+
+// Save edited answers
+window.saveEditedAnswers = async function(type, id) {
+    // Collect all input values
+    const inputs = document.querySelectorAll('#modal-questionnaire-content input');
+    const updatedAnswers = {};
+    inputs.forEach(input => {
+        const topic = input.dataset.topic;
+        const label = input.dataset.label;
+        const sublabel = input.dataset.sublabel;
+        if (!updatedAnswers[topic]) updatedAnswers[topic] = {};
+        if (sublabel) {
+            if (!updatedAnswers[topic][label]) updatedAnswers[topic][label] = {};
+            updatedAnswers[topic][label][sublabel] = input.value;
+        } else {
+            updatedAnswers[topic][label] = input.value;
+        }
+    });
+    // Send update to backend
+    try {
+        const res = await fetch(`http://localhost:3000/api/questionnaire-responses`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, answers: updatedAnswers })
+        });
+        if (!res.ok) throw new Error('Failed to save changes');
+        alert('Answers updated successfully!');
+        closeModal();
+        // Optionally reload the table
+        if (type === 'forecast') loadForecasts();
+        else loadActivities();
+    } catch (err) {
+        alert('Failed to save changes.');
+    }
+};
+// UpdateData for forecast to collect values from inputs
+window.updateData = async function(type, id) {
+    try {
+        let updatePayload = {
+            admin_review: true,
+            reviewed_at: new Date().toISOString()
+        };
+        if (type === 'forecast') {
+            updatePayload.week_number = document.getElementById('input-week_number').value;
+            updatePayload.subject = document.getElementById('input-subject').value;
+            updatePayload.topic = document.getElementById('input-topic').value;
+            updatePayload.subtopic = document.getElementById('input-subtopic').value;
+            updatePayload.material = document.getElementById('input-material').value;
+            updatePayload.date = document.getElementById('input-date').value;
+            await api.updateForecastStatus(id, updatePayload);
+            await loadForecasts();
+        } else if (type === 'activity') {
+            // (You can add similar logic for activities if needed)
+            await api.updateActivityStatus(id, updatePayload);
+            await loadActivities();
+        }
+        closeModal();
+        // Show success message
+        const statusMessage = document.createElement('div');
+        statusMessage.className = 'status-message success';
+        statusMessage.textContent = '✅ Data updated successfully!';
+        document.body.appendChild(statusMessage);
+        setTimeout(() => statusMessage.remove(), 3000);
+    } catch (error) {
+        console.error('Error updating data:', error);
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'status-message error';
+        errorMessage.textContent = '❌ Error updating data. Please try again.';
+        document.body.appendChild(errorMessage);
+        setTimeout(() => errorMessage.remove(), 3000);
+    }
+};
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {

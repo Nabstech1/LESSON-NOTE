@@ -3,14 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Review Forecasts</title>
+    <title>Zonal - Review Forecasts</title>
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="admin-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .my-table th.actions-col, .my-table td.actions-col {
+            min-width: 140px;
+            width: 140px;
+            text-align: left;
+        }
+        .action-btn {
+            display: inline-block;
+            margin: 0 2px 0 0;
+            vertical-align: middle;
+            min-width: 48px;
+            padding: 4px 10px;
+            font-size: 0.98em;
+            border-radius: 5px;
+        }
+        .view-btn.action-btn, .edit-btn.action-btn {
+            width: auto;
+            min-width: 48px;
+            padding: 4px 10px;
+            font-size: 0.98em;
+        }
+        .forward-btn.action-btn {
+            width: auto;
+            min-width: 36px;
+            padding: 4px 6px;
+            font-size: 0.98em;
+        }
+        /* Style for edit modal input fields */
+        #modal-questionnaire-content input[type="text"] {
+            border: 1px solid #bfc9d9;
+            border-radius: 5px;
+            padding: 7px 12px;
+            font-size: 1em;
+            background: #f7faff;
+            margin: 2px 0;
+            transition: border 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+        #modal-questionnaire-content input[type="text"]:focus {
+            border: 1.5px solid #2563eb;
+            outline: none;
+            background: #fff;
+            box-shadow: 0 0 0 2px #2563eb22;
+        }
+        .context-section {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .context-section label {
+            min-width: 60px;
+            margin-bottom: 0;
+        }
+        .context-section input[type="date"],
+        .context-section select {
+            min-width: 180px;
+            max-width: 220px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1.5px solid #e57373;
+            font-size: 1em;
+        }
+    </style>
 </head>
 <body>
     <div class="sidebar">
-        <h2>Admin Dashboard</h2>
+        <img src="../loggg.jpeg" alt="Logo" class="home-logo" style="display:block;margin:0 auto 16px auto;max-width:120px;">
+        <h2>Zonal Dashboard</h2>
         <nav class="sidebar-nav">
             <a href="index.html" class="nav-link">
                 <span class="nav-icon">📊</span>
@@ -28,7 +93,12 @@
                 <span class="nav-icon">⚙️</span>
                 Settings
             </a>
+            <a href="submission-history.html" class="nav-link">
+                <span class="nav-icon">🕓</span>
+                Submission History
+            </a>
         </nav>
+        <button id="logoutBtn" class="logout-btn" style="margin: 24px 0 0 0; width: 90%; display: block; background: #e53935; color: #fff; font-weight: bold; border: none; border-radius: 6px; padding: 12px 0; cursor: pointer;">Log Out</button>
     </div>
 
     <div class="content">
@@ -39,77 +109,75 @@
                     Review Weekly Forecasts
                 </h1>
             </div>
+            <div id="forward-success-message" style="display:none;color:#388e3c;background:#e8f5e9;padding:10px 18px;border-radius:6px;margin-bottom:18px;font-weight:600;text-align:center;"></div>
 
-            <!-- Filters Section -->
-            <div class="card filters-card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        <span class="title-icon">🔍</span>
-                        Filter Forecasts
-                    </h3>
+            <!-- Context Section -->
+            <div class="assignment-info" style="background: #f8fafc; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 20px 32px; margin-bottom: 24px; display: flex; gap: 40px; align-items: flex-end; max-width: 700px;">
+                <div style="display: flex; flex-direction: column; min-width: 180px;">
+                    <label style="font-weight: 600; color: #2563eb; font-size: 1.08em; margin-bottom: 4px;">Region</label>
+                    <input type="text" id="region-display" readonly style="background:#f3f3f3; border: 1px solid #d1d5db; border-radius: 6px; min-width: 160px; font-size: 1.08em; padding: 7px 10px; color: #222; font-weight: 500;" />
                 </div>
-                <div class="filters-grid">
-                    <div class="form-group">
-                        <label class="form-label" for="class-filter">Class</label>
-                        <select id="class-filter" class="form-control">
-                            <option value="">All Classes</option>
-                            <option value="CRECHE">CRECHE</option>
-                            <option value="NURSERY">NURSERY</option>
-                            <option value="KG1">KG1</option>
-                            <option value="KG2">KG2</option>
-                            <option value="CLASS 1">CLASS 1</option>
-                            <option value="CLASS 2">CLASS 2</option>
-                            <option value="CLASS 3">CLASS 3</option>
-                            <option value="CLASS 4">CLASS 4</option>
-                            <option value="CLASS 5">CLASS 5</option>
-                            <option value="CLASS 6">CLASS 6</option>
-                            <option value="CLASS 7">CLASS 7</option>
-                            <option value="CLASS 8">CLASS 8</option>
-                            <option value="CLASS 9">CLASS 9</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="section-filter">Section</label>
-                        <select id="section-filter" class="form-control">
-                            <option value="">All Sections</option>
-                            <option value="SINGLE">SINGLE STREAM</option>
-                            <option value="A">Section A</option>
-                            <option value="B">Section B</option>
-                            <option value="C">Section C</option>
-                            <option value="D">Section D</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="status-filter">Status</label>
-                        <select id="status-filter" class="form-control">
-                            <option value="">All Status</option>
-                            <option value="pending">Pending Review</option>
-                            <option value="reviewed">Reviewed</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="week-filter">Week</label>
-                        <select id="week-filter" class="form-control">
-                            <option value="">All Weeks</option>
-                            <!-- Will be populated by JavaScript -->
-                        </select>
-                    </div>
+                <div style="display: flex; flex-direction: column; min-width: 180px;">
+                    <label style="font-weight: 600; color: #2563eb; font-size: 1.08em; margin-bottom: 4px;">Zone</label>
+                    <input type="text" id="zone-display" readonly style="background:#f3f3f3; border: 1px solid #d1d5db; border-radius: 6px; min-width: 160px; font-size: 1.08em; padding: 7px 10px; color: #222; font-weight: 500;" />
+                </div>
+                <div style="display: flex; flex-direction: column; min-width: 180px;">
+                    <label style="font-weight: 600; color: #2563eb; font-size: 1.08em; margin-bottom: 4px;">Date of Forwarding</label>
+                    <input type="date" id="forward-date" style="background:#f3f3f3; border: 1px solid #d1d5db; border-radius: 6px; min-width: 160px; font-size: 1.08em; padding: 7px 10px; color: #222; font-weight: 500;" />
                 </div>
             </div>
+            <!-- Remove the old date picker for filtering (Date) below the assignment-info section -->
 
             <!-- Forecasts Table -->
             <div class="card table-card">
                 <div class="table-container">
-                    <table class="admin-table">
+                    <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 12px;">
+                        <button id="filter-toggle-btn" class="submit-btn" style="padding: 8px 22px;">Filter</button>
+                    </div>
+                    <div id="filter-panel" class="filter-panel" style="display:none; position:absolute; right:32px; top:80px; background:#fff; border:1.5px solid #e57373; border-radius:8px; box-shadow:0 4px 24px #0001; padding:18px 22px; z-index:1002; min-width:320px;">
+                        <button id="close-filter-btn" style="position:absolute;top:8px;right:12px;font-size:1.3em;background:none;border:none;color:#b71c1c;cursor:pointer;">&times;</button>
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <label>Status
+                                <select id="filter-status">
+                                    <option value="">All</option>
+                                    <option value="READ">READ</option>
+                                    <option value="UNREAD">UNREAD</option>
+                                </select>
+                            </label>
+                            <label>Date Range
+                                <input type="date" id="filter-date-start" style="margin-right:8px;" />
+                                <input type="date" id="filter-date-end" />
+                            </label>
+                            <label>Region
+                                <select id="filter-region"><option value="">All</option></select>
+                            </label>
+                            <label>Zone
+                                <select id="filter-zone"><option value="">All</option></select>
+                            </label>
+                            <label>Circuit
+                                <select id="filter-circuit"><option value="">All</option></select>
+                            </label>
+                            <button id="apply-filter-btn" class="submit-btn" style="margin-top:8px;">Apply</button>
+                        </div>
+                    </div>
+                    <style>
+                    .filter-panel label { font-weight: 500; color: #b71c1c; }
+                    .filter-panel select, .filter-panel input[type="date"] { width: 100%; margin-top: 2px; margin-bottom: 6px; }
+                    </style>
+                    <div style="margin-bottom: 12px;">
+                        <button id="send-selected-btn" class="view-btn action-btn forward-btn" style="background:#4caf50;display:inline-block;" onclick="window.forwardSelectedReports(getSelectedIds())">SEND SELECTED</button>
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 16px;">
+                        <input id="search-bar" type="text" placeholder="Search reports..." style="width: 340px; padding: 8px 14px; border-radius: 6px; border: 1.5px solid #e57373; font-size: 1em;" />
+                    </div>
+                    <table class="my-table">
                         <thead>
                             <tr>
-                                <th>Week</th>
-                                <th>Class</th>
-                                <th>Section</th>
-                                <th>Subject</th>
-                                <th>Topic</th>
+                                <th><input type="checkbox" id="select-all-checkbox"></th>
+                                <th>Date</th>
+                                <th>Circuit</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                <th class="actions-col">Action</th>
                             </tr>
                         </thead>
                         <tbody id="forecasts-table-body">
@@ -124,62 +192,682 @@
     <!-- Review Modal -->
     <div id="review-modal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>Review Forecast</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <!-- Forecast Details -->
-                <div class="review-details">
-                    <div class="detail-group">
-                        <label>Class:</label>
-                        <span id="modal-class"></span>
-                    </div>
-                    <div class="detail-group">
-                        <label>Section:</label>
-                        <span id="modal-section"></span>
-                    </div>
-                    <div class="detail-group">
-                        <label>Week:</label>
-                        <span id="modal-day"></span>
-                    </div>
-                    <div class="detail-group">
-                        <label>Topic:</label>
-                        <span id="modal-topic"></span>
-                    </div>
-                    <div class="detail-group">
-                        <label>Sub-topic:</label>
-                        <span id="modal-subtopic"></span>
-                    </div>
-                    <div class="detail-group">
-                        <label>Material:</label>
-                        <span id="modal-material"></span>
-                    </div>
-                </div>
-
-                <!-- Review Form -->
-                <div class="review-form">
-                    <div class="form-group">
-                        <label for="rating">Rating:</label>
-                        <div class="rating-input">
-                            <input type="number" id="rating" min="1" max="5" value="5">
-                            <span class="rating-max">/5</span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="feedback">Feedback:</label>
-                        <textarea id="feedback" rows="4" placeholder="Enter your feedback..."></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
-                <button class="submit-btn" onclick="submitReview()">Submit Review</button>
-            </div>
+            <button class="close-btn" onclick="closeModal()" style="position:absolute;top:10px;right:16px;font-size:1.5em;background:none;border:none;color:#888;cursor:pointer;">&times;</button>
+            <h2 style="margin-top:0;">Review Forecast</h2>
+            <div id="modal-questionnaire-content"></div>
         </div>
     </div>
+    <!-- Profile Icon Button -->
+<button class="profile-icon-btn" id="profileIconBtn" title="Profile">
+  <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#2563eb"/></svg>
+</button>
+<!-- Profile Modal Backdrop and Modal -->
+<div class="profile-modal-backdrop" id="profileModalBackdrop"></div>
+<div class="profile-modal" id="profileModal" style="display:none;">
+  <button class="close-profile-modal" id="closeProfileModal">&times;</button>
+  <div class="profile-avatar">
+    <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#fff"/></svg>
+  </div>
+  <div class="profile-btn-row">
+    <button id="editProfileBtn">EDIT</button>
+    <button id="changePassBtn">PASS</button>
+  </div>
+  <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+</div>
+<!-- Profile Edit Modal Backdrop and Modal -->
+<div class="profile-edit-modal-backdrop" id="profileEditModalBackdrop"></div>
+<div class="profile-edit-modal" id="profileEditModal" style="display:none;">
+  <button class="close-edit-modal" id="closeEditModal">&times;</button>
+  <h2>Edit Profile</h2>
+  <form id="profileEditForm">
+    <div class="form-group">
+      <label for="editDob">Date of Birth</label>
+      <input type="date" id="editDob" name="dob" />
+    </div>
+    <div class="form-group">
+      <label for="editPhone">Phone Number</label>
+      <input type="text" id="editPhone" name="phone_number" maxlength="30" />
+    </div>
+    <div class="form-group">
+      <label for="editSex">Sex</label>
+      <select id="editSex" name="sex">
+        <option value="">Select</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="editAims">AIMS Number</label>
+      <input type="text" id="editAims" name="aims_number" maxlength="50" />
+    </div>
+    <div class="modal-btn-row">
+      <button type="button" id="cancelEditBtn">Cancel</button>
+      <button type="submit" id="saveEditBtn">Save</button>
+    </div>
+    <div class="status-message" id="editStatusMsg"></div>
+  </form>
+</div>
+    <script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    async function fetchForecasts() {
+        const userId = user ? user.id : null;
+        let url = `http://localhost:3000/api/questionnaire-responses?type=forecast&stage=admin`;
+        if (user && user.zone_id) url += `&zone_id=${user.zone_id}`;
+        const res = await fetch(url);
+        return await res.json();
+    }
+    function extractForecastFields(response) {
+        let answers = response.answers;
+        if (typeof answers === 'string') {
+            try { answers = JSON.parse(answers); } catch (e) { answers = {}; }
+        }
+        let tajneedTotal = '', motamadAttendance = '', motamadMeetings = '';
+        if (answers['Mohtamim Tajneed'] && answers['Mohtamim Tajneed']['Tajneed']) {
+            tajneedTotal = answers['Mohtamim Tajneed']['Tajneed']['Total'] || '';
+        }
+        if (answers['Motamad']) {
+            motamadAttendance = answers['Motamad']['Attendance'] || '';
+            motamadMeetings = answers['Motamad']['No. of National Amila Meetings held this month'] || '';
+        }
+        return {
+            week_number: motamadMeetings,
+            subject: motamadAttendance,
+            topic: tajneedTotal
+        };
+    }
+    function renderQuestionnaireModal(answers) {
+        const container = document.getElementById('modal-questionnaire-content');
+        container.innerHTML = '';
+        Object.entries(answers).forEach(([topic, questions]) => {
+            const topicDiv = document.createElement('div');
+            topicDiv.className = 'modal-topic';
+            const topicTitle = document.createElement('h4');
+            topicTitle.style.color = '#2563eb';
+            topicTitle.style.fontSize = '1.15em';
+            topicTitle.style.marginTop = '18px';
+            topicTitle.textContent = topic;
+            topicDiv.appendChild(topicTitle);
+            // Create a table for questions/answers
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.style.marginBottom = '18px';
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const qth = document.createElement('th');
+            qth.textContent = 'Question';
+            qth.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+            qth.style.color = '#1741a6';
+            qth.style.padding = '6px 10px';
+            qth.style.textAlign = 'left';
+            const ath = document.createElement('th');
+            ath.textContent = 'Answer';
+            ath.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+            ath.style.color = '#1741a6';
+            ath.style.padding = '6px 10px';
+            ath.style.textAlign = 'left';
+            headerRow.appendChild(qth);
+            headerRow.appendChild(ath);
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            const tbody = document.createElement('tbody');
+            let rowIdx = 0;
+            Object.entries(questions).forEach(([label, value]) => {
+                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    Object.entries(value).forEach(([subLabel, subValue]) => {
+                        const row = document.createElement('tr');
+                        row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                        const qCell = document.createElement('td');
+                        qCell.textContent = label + ' - ' + subLabel;
+                        qCell.style.fontWeight = 'bold';
+                        qCell.style.padding = '6px 10px';
+                        const aCell = document.createElement('td');
+                        aCell.textContent = subValue;
+                        aCell.style.padding = '6px 10px';
+                        row.appendChild(qCell);
+                        row.appendChild(aCell);
+                        tbody.appendChild(row);
+                        rowIdx++;
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                    const qCell = document.createElement('td');
+                    qCell.textContent = label;
+                    qCell.style.fontWeight = 'bold';
+                    qCell.style.padding = '6px 10px';
+                    const aCell = document.createElement('td');
+                    aCell.textContent = value;
+                    aCell.style.padding = '6px 10px';
+                    row.appendChild(qCell);
+                    row.appendChild(aCell);
+                    tbody.appendChild(row);
+                    rowIdx++;
+                }
+            });
+            table.appendChild(tbody);
+            topicDiv.appendChild(table);
+            container.appendChild(topicDiv);
+        });
+    }
+    function openModal(answers) {
+        let parsedAnswers = answers;
+        if (typeof answers === 'string') {
+            try {
+                parsedAnswers = JSON.parse(answers);
+            } catch (e) {
+                parsedAnswers = {};
+            }
+        }
+        renderQuestionnaireModal(parsedAnswers);
+        document.getElementById('review-modal').style.display = 'block';
+    }
+    function closeModal() {
+        document.getElementById('review-modal').style.display = 'none';
+    }
+    async function loadForecasts() {
+        const forecasts = await fetchForecasts();
+        // Sort by submitted_at (or id) descending so newest is first
+        forecasts.sort((a, b) => {
+            const dateA = a.submitted_at ? new Date(a.submitted_at) : new Date(0);
+            const dateB = b.submitted_at ? new Date(b.submitted_at) : new Date(0);
+            if (dateA.getTime() !== dateB.getTime()) {
+                return dateB - dateA; // Most recent first
+            }
+            return (b.id || 0) - (a.id || 0); // Fallback to id
+        });
+        const tbody = document.getElementById('forecasts-table-body');
+        tbody.innerHTML = '';
+        forecasts.forEach(forecast => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input type="checkbox" class="row-checkbox" data-id="${forecast.id}"></td>
+                <td>${forecast.submitted_at ? new Date(forecast.submitted_at).toLocaleDateString() : ''}</td>
+                <td>${forecast.circuit_name || ''}</td>
+                <td class="status-cell">${forecast.status === 'READ' ? 'READ' : 'UNREAD'}</td>
+                <td class="actions-col"></td>
+            `;
+            const actionCell = tr.querySelector('td.actions-col');
+            // Create and append only one set of buttons
+            const viewBtn = document.createElement('button');
+            viewBtn.className = 'view-btn action-btn';
+            viewBtn.textContent = 'View';
+            viewBtn.onclick = () => openModal(forecast.answers);
+            const editBtn = document.createElement('button');
+            editBtn.className = 'edit-btn action-btn';
+            editBtn.style.background = '#f59e42';
+            editBtn.textContent = 'Edit';
+            editBtn.onclick = () => openEditModal(forecast.answers, forecast.id);
+            const forwardBtn = document.createElement('button');
+            forwardBtn.className = 'forward-btn action-btn';
+            forwardBtn.style.background = '#4caf50';
+            forwardBtn.textContent = 'SEND';
+            forwardBtn.onclick = async () => {
+                const user = JSON.parse(localStorage.getItem('user'));
+                const submitted_by = user ? user.id : null;
+                const forwardDate = document.getElementById('forward-date').value;
+                const region_id = user ? user.region_id : null;
+                const zone_id = user ? user.zone_id : null;
+                if (!forwardDate) {
+                    alert('Please select the Date of Forwarding before sending reports.');
+                    return;
+                }
+                const payload = { id: forecast.id, stage: 'regional', submitted_by, zonal_forward_date: forwardDate, region_id, zone_id };
+                await fetch('http://localhost:3000/api/questionnaire-responses', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                loadForecasts();
+                document.getElementById('forward-success-message').textContent = 'Report forwarded successfully!';
+                document.getElementById('forward-success-message').style.display = 'block';
+                setTimeout(() => { document.getElementById('forward-success-message').style.display = 'none'; }, 2500);
+            };
+            const checkBtn = document.createElement('button');
+            checkBtn.className = 'check-btn action-btn';
+            checkBtn.style.background = '#2196f3';
+            checkBtn.style.fontWeight = 'bold';
+            checkBtn.title = 'Toggle Read/Unread';
+            checkBtn.textContent = forecast.status === 'READ' ? 'UNREAD' : 'READ';
+            checkBtn.onclick = () => {
+                // Toggle status visually
+                const statusCell = tr.querySelector('.status-cell');
+                if (checkBtn.textContent === 'READ') {
+                    checkBtn.textContent = 'UNREAD';
+                    statusCell.textContent = 'READ';
+                } else {
+                    checkBtn.textContent = 'READ';
+                    statusCell.textContent = 'UNREAD';
+                }
+                // Optionally, send update to backend here
+            };
+            actionCell.appendChild(viewBtn);
+            actionCell.appendChild(editBtn);
+            actionCell.appendChild(forwardBtn);
+            actionCell.appendChild(checkBtn);
+            tbody.appendChild(tr);
+        });
 
-    <script src="../api.js"></script>
-    <script src="admin.js"></script>
+        // Forward function placeholder
+        // window.forwardForecast = async function(id) {
+        //     // Update stage to 'regional' for this report
+        //     await fetch('http://localhost:3000/api/questionnaire-responses', {
+        //         method: 'PATCH',
+        //         headers: { 'Content-Type': 'application/json' },
+        //         body: JSON.stringify({ id, stage: 'regional' })
+        //     });
+        //     alert('Forwarded forecast with ID: ' + id + ' to Regional Level.');
+        //     loadForecasts();
+        // };
+
+        // Select all logic
+        const selectAll = document.getElementById('select-all-checkbox');
+        selectAll.onclick = function() {
+            document.querySelectorAll('.row-checkbox').forEach(cb => {
+                cb.checked = selectAll.checked;
+            });
+        };
+        // Uncheck select-all if any row is unchecked
+        tbody.querySelectorAll('.row-checkbox').forEach(cb => {
+            cb.addEventListener('change', function() {
+                if (!this.checked) selectAll.checked = false;
+                else if ([...tbody.querySelectorAll('.row-checkbox')].every(c => c.checked)) selectAll.checked = true;
+            });
+        });
+        // SEND SELECTED button logic
+        // document.getElementById('send-selected-btn').onclick = function() {
+        //     const selectedIds = [...document.querySelectorAll('.row-checkbox:checked')].map(cb => cb.dataset.id);
+        //     if (selectedIds.length === 0) {
+        //         alert('No reports selected.');
+        //         return;
+        //     }
+        //     forwardSelectedReports(selectedIds);
+        // };
+        // Placeholder for forwarding selected
+    }
+
+    // Editable modal logic
+    function renderEditableQuestionnaireModal(answers) {
+        const container = document.getElementById('modal-questionnaire-content');
+        container.innerHTML = '';
+        Object.entries(answers).forEach(([topic, questions]) => {
+            const topicDiv = document.createElement('div');
+            topicDiv.className = 'modal-topic';
+            const topicTitle = document.createElement('h4');
+            topicTitle.style.color = '#2563eb';
+            topicTitle.style.fontSize = '1.15em';
+            topicTitle.style.marginTop = '18px';
+            topicTitle.textContent = topic;
+            topicDiv.appendChild(topicTitle);
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.style.marginBottom = '18px';
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            const qth = document.createElement('th');
+            qth.textContent = 'Question';
+            qth.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+            qth.style.color = '#1741a6';
+            qth.style.padding = '6px 10px';
+            qth.style.textAlign = 'left';
+            const ath = document.createElement('th');
+            ath.textContent = 'Answer';
+            ath.style.background = 'linear-gradient(90deg, #e3eaff, #f3f6fa)';
+            ath.style.color = '#1741a6';
+            ath.style.padding = '6px 10px';
+            ath.style.textAlign = 'left';
+            headerRow.appendChild(qth);
+            headerRow.appendChild(ath);
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            const tbody = document.createElement('tbody');
+            let rowIdx = 0;
+            Object.entries(questions).forEach(([label, value]) => {
+                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    Object.entries(value).forEach(([subLabel, subValue]) => {
+                        const row = document.createElement('tr');
+                        row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                        const qCell = document.createElement('td');
+                        qCell.textContent = label + ' - ' + subLabel;
+                        qCell.style.fontWeight = 'bold';
+                        qCell.style.padding = '6px 10px';
+                        const aCell = document.createElement('td');
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.value = subValue;
+                        input.style.width = '100%';
+                        input.style.padding = '4px 8px';
+                        input.dataset.topic = topic;
+                        input.dataset.label = label;
+                        input.dataset.sublabel = subLabel;
+                        aCell.appendChild(input);
+                        aCell.style.padding = '6px 10px';
+                        row.appendChild(qCell);
+                        row.appendChild(aCell);
+                        tbody.appendChild(row);
+                        rowIdx++;
+                    });
+                } else {
+                    const row = document.createElement('tr');
+                    row.style.background = rowIdx % 2 === 0 ? '#f7faff' : '#fff';
+                    const qCell = document.createElement('td');
+                    qCell.textContent = label;
+                    qCell.style.fontWeight = 'bold';
+                    qCell.style.padding = '6px 10px';
+                    const aCell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = value;
+                    input.style.width = '100%';
+                    input.style.padding = '4px 8px';
+                    input.dataset.topic = topic;
+                    input.dataset.label = label;
+                    aCell.appendChild(input);
+                    aCell.style.padding = '6px 10px';
+                    row.appendChild(qCell);
+                    row.appendChild(aCell);
+                    tbody.appendChild(row);
+                    rowIdx++;
+                }
+            });
+            table.appendChild(tbody);
+            topicDiv.appendChild(table);
+            container.appendChild(topicDiv);
+        });
+    }
+    function openEditModal(answers, id) {
+        let parsedAnswers = answers;
+        if (typeof answers === 'string') {
+            try {
+                parsedAnswers = JSON.parse(answers);
+            } catch (e) {
+                parsedAnswers = {};
+            }
+        }
+        renderEditableQuestionnaireModal(parsedAnswers);
+        document.getElementById('review-modal').style.display = 'block';
+        // Add Save button
+        let modalContent = document.querySelector('#review-modal .modal-content');
+        let saveBtn = document.getElementById('edit-save-btn');
+        if (!saveBtn) {
+            saveBtn = document.createElement('button');
+            saveBtn.id = 'edit-save-btn';
+            saveBtn.className = 'submit-btn';
+            saveBtn.textContent = 'Save';
+            saveBtn.style.marginTop = '18px';
+            saveBtn.onclick = () => saveEditedAnswers(id);
+            modalContent.appendChild(saveBtn);
+        }
+    }
+    async function saveEditedAnswers(id) {
+        // Collect all input values
+        const inputs = document.querySelectorAll('#modal-questionnaire-content input');
+        const updatedAnswers = {};
+        inputs.forEach(input => {
+            const topic = input.dataset.topic;
+            const label = input.dataset.label;
+            const sublabel = input.dataset.sublabel;
+            if (!updatedAnswers[topic]) updatedAnswers[topic] = {};
+            if (sublabel) {
+                if (!updatedAnswers[topic][label]) updatedAnswers[topic][label] = {};
+                updatedAnswers[topic][label][sublabel] = input.value;
+            } else {
+                updatedAnswers[topic][label] = input.value;
+            }
+        });
+        // Send update to backend
+        try {
+            const res = await fetch(`http://localhost:3000/api/questionnaire-responses`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, answers: updatedAnswers })
+            });
+            if (!res.ok) throw new Error('Failed to save changes');
+            alert('Answers updated successfully!');
+            closeModal();
+            loadForecasts();
+        } catch (err) {
+            alert('Failed to save changes.');
+        }
+    }
+    // Toggle read/unread status (make global)
+    window.toggleReadStatus = async function(id, tr, currentStatus) {
+        // Update UI immediately
+        const statusCell = tr.querySelector('.status-cell');
+        const checkBtn = tr.querySelector('.check-btn');
+        const newStatus = currentStatus === 'READ' ? 'UNREAD' : 'READ';
+        statusCell.textContent = newStatus;
+        checkBtn.innerHTML = newStatus === 'READ' ? '&#10003;' : '&#9633;';
+        // Placeholder for backend update
+        // await fetch(`http://localhost:3000/api/questionnaire-responses/status`, { method: 'PATCH', ... })
+    };
+    document.addEventListener('DOMContentLoaded', loadForecasts);
+    </script>
+    <script>
+    if (!user) {
+      window.location.href = '../login.html';
+    }
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const user = JSON.parse(localStorage.getItem('user'));
+        // Fetch all regions and zones
+        const [regions, zones] = await Promise.all([
+            fetch('http://localhost:3000/api/regions').then(r => r.json()),
+            fetch('http://localhost:3000/api/zones').then(r => r.json())
+        ]);
+        function findName(arr, id) {
+            if (!id) return '';
+            const item = arr.find(x => String(x.id) === String(id));
+            if (!item) return '(Unassigned)';
+            return item.name;
+        }
+        document.getElementById('region-display').value = findName(regions, user && user.region_id);
+        document.getElementById('zone-display').value = findName(zones, user && user.zone_id);
+    });
+    document.getElementById('filter-toggle-btn').onclick = function() {
+        const panel = document.getElementById('filter-panel');
+        panel.style.display = (panel.style.display === 'none' || !panel.style.display) ? 'block' : 'none';
+    };
+    document.getElementById('close-filter-btn').onclick = function() {
+        document.getElementById('filter-panel').style.display = 'none';
+    };
+    document.getElementById('apply-filter-btn').onclick = function() {
+        const status = document.getElementById('filter-status').value;
+        const dateStart = document.getElementById('filter-date-start').value;
+        const dateEnd = document.getElementById('filter-date-end').value;
+        const region = document.getElementById('filter-region').value;
+        const zone = document.getElementById('filter-zone').value;
+        const circuit = document.getElementById('filter-circuit').value;
+        // Filter table rows based on selected filters
+        const rows = document.querySelectorAll('.my-table tbody tr');
+        rows.forEach(row => {
+            let show = true;
+            if (status) {
+                const statusCell = row.querySelector('.status-cell');
+                if (statusCell && statusCell.textContent.trim() !== status) show = false;
+            }
+            if (dateStart) {
+                const dateCell = row.children[1];
+                if (dateCell && new Date(dateCell.textContent) < new Date(dateStart)) show = false;
+            }
+            if (dateEnd) {
+                const dateCell = row.children[1];
+                if (dateCell && new Date(dateCell.textContent) > new Date(dateEnd)) show = false;
+            }
+            if (region) {
+                const regionCell = row.getAttribute('data-region-id');
+                if (regionCell && regionCell !== region) show = false;
+            }
+            if (zone) {
+                const zoneCell = row.getAttribute('data-zone-id');
+                if (zoneCell && zoneCell !== zone) show = false;
+            }
+            if (circuit) {
+                const circuitCell = row.getAttribute('data-circuit-id');
+                if (circuitCell && circuitCell !== circuit) show = false;
+            }
+            row.style.display = show ? '' : 'none';
+        });
+        document.getElementById('filter-panel').style.display = 'none';
+    };
+    // Get user from localStorage
+    // user already declared at the top
+    let regions = [], zones = [];
+    async function fetchRegionsZones() {
+        const [r, z] = await Promise.all([
+            fetch('http://localhost:3000/api/regions').then(r => r.json()),
+            fetch('http://localhost:3000/api/zones').then(r => r.json())
+        ]);
+        regions = r; zones = z;
+        populateRegionDropdown();
+    }
+    function populateRegionDropdown() {
+        var regionSelect = document.getElementById('region-context');
+        if (regionSelect) {
+            regionSelect.innerHTML = '<option value="">Select Region</option>' +
+                regions.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+            regionSelect.onchange = function() {
+                populateZoneDropdown(this.value);
+            };
+        }
+    }
+    function populateZoneDropdown(regionId) {
+        const zoneSelect = document.getElementById('zone-context');
+        zoneSelect.innerHTML = '<option value="">Select Zone</option>' +
+            zones.filter(z => z.region_id == regionId).map(z => `<option value="${z.id}">${z.name}</option>`).join('');
+    }
+    fetchRegionsZones();
+    // TODO: Update filtering logic to use date, region, and zone
+    document.getElementById('search-bar').addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        document.querySelectorAll('#forecasts-table-body tr').forEach(row => {
+            // Circuit is the 3rd column (index 2)
+            const circuitCell = row.children[2];
+            row.style.display = circuitCell && circuitCell.textContent.toLowerCase().includes(query) ? '' : 'none';
+        });
+    });
+    </script>
+    <script>
+    function getSelectedIds() {
+        return Array.from(document.querySelectorAll('.row-checkbox:checked')).map(cb => cb.getAttribute('data-id'));
+    }
+    window.forwardSelectedReports = async function(ids) {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const submitted_by = user ? user.id : null;
+        const forwardDate = document.getElementById('forward-date').value;
+        const region_id = user ? user.region_id : null;
+        const zone_id = user ? user.zone_id : null;
+        if (!forwardDate) {
+            alert('Please select the Date of Forwarding before sending reports.');
+            return;
+        }
+        for (const id of ids) {
+            const payload = { id, stage: 'regional', submitted_by, zonal_forward_date: forwardDate, region_id, zone_id };
+            await fetch('http://localhost:3000/api/questionnaire-responses', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        }
+        loadForecasts();
+        document.getElementById('forward-success-message').textContent = 'Report forwarded successfully!';
+        document.getElementById('forward-success-message').style.display = 'block';
+        setTimeout(() => { document.getElementById('forward-success-message').style.display = 'none'; }, 2500);
+    };
+    </script>
+    <script>
+    function getSelectedIds() {
+        return Array.from(document.querySelectorAll('.row-checkbox:checked')).map(cb => cb.getAttribute('data-id'));
+    }
+    // Profile Modal Logic
+    const profileIconBtn = document.getElementById('profileIconBtn');
+    const profileModal = document.getElementById('profileModal');
+    const profileModalBackdrop = document.getElementById('profileModalBackdrop');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+    profileIconBtn.onclick = () => {
+      profileModal.style.display = 'flex';
+      profileModalBackdrop.style.display = 'block';
+    };
+    profileModalBackdrop.onclick = closeProfileModal.onclick = () => {
+      profileModal.style.display = 'none';
+      profileModalBackdrop.style.display = 'none';
+    };
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.removeItem('user');
+      window.location.href = '../login.html';
+    };
+    document.getElementById('editProfileBtn').onclick = function() {
+      alert('Edit profile functionality coming soon!');
+    };
+    document.getElementById('changePassBtn').onclick = function() {
+      document.getElementById('profileModal').style.display = 'none';
+      document.getElementById('profilePassModal').style.display = 'flex';
+      document.getElementById('profilePassModalBackdrop').style.display = 'block';
+    };
+    </script>
+    <script>
+// Profile Edit Modal Logic
+const profileEditModal = document.getElementById('profileEditModal');
+const profileEditModalBackdrop = document.getElementById('profileEditModalBackdrop');
+const closeEditModal = document.getElementById('closeEditModal');
+const editProfileBtn = document.getElementById('editProfileBtn');
+const cancelEditBtn = document.getElementById('cancelEditBtn');
+const profileEditForm = document.getElementById('profileEditForm');
+const editStatusMsg = document.getElementById('editStatusMsg');
+
+function openProfileEditModal() {
+  // Get user from localStorage
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  document.getElementById('editDob').value = user.dob || '';
+  document.getElementById('editPhone').value = user.phone_number || '';
+  document.getElementById('editSex').value = user.sex || '';
+  document.getElementById('editAims').value = user.aims_number || '';
+  editStatusMsg.textContent = '';
+  profileEditModal.style.display = 'flex';
+  profileEditModalBackdrop.style.display = 'block';
+}
+function closeProfileEditModal() {
+  profileEditModal.style.display = 'none';
+  profileEditModalBackdrop.style.display = 'none';
+}
+editProfileBtn.onclick = openProfileEditModal;
+closeEditModal.onclick = closeProfileEditModal;
+profileEditModalBackdrop.onclick = closeProfileEditModal;
+cancelEditBtn.onclick = closeProfileEditModal;
+profileEditForm.onsubmit = async function(e) {
+  e.preventDefault();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const dob = document.getElementById('editDob').value;
+  const phone_number = document.getElementById('editPhone').value.trim();
+  const sex = document.getElementById('editSex').value;
+  const aims_number = document.getElementById('editAims').value.trim();
+  editStatusMsg.textContent = '';
+  try {
+    const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dob, phone_number, sex, aims_number })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      // Update localStorage user
+      user.dob = dob;
+      user.phone_number = phone_number;
+      user.sex = sex;
+      user.aims_number = aims_number;
+      localStorage.setItem('user', JSON.stringify(user));
+      editStatusMsg.textContent = 'Profile updated!';
+      setTimeout(closeProfileEditModal, 1000);
+    } else {
+      editStatusMsg.textContent = data.error || 'Failed to update profile.';
+    }
+  } catch (err) {
+    editStatusMsg.textContent = 'Server error. Please try again.';
+  }
+};
+</script>
 </body>
 </html> 

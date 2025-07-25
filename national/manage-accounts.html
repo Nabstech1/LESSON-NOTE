@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National - Manage Accounts</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>National Dashboard</h2>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link"><span class="nav-icon">📊</span>Dashboard</a>
+            <a href="review-forecasts.html" class="nav-link"><span class="nav-icon">📋</span>Review Forecasts</a>
+            <a href="review-activities.html" class="nav-link"><span class="nav-icon">📝</span>Review Activities</a>
+            <a href="manage-accounts.html" class="nav-link active"><span class="nav-icon">👥</span>Manage Accounts</a>
+            <a href="settings.html" class="nav-link"><span class="nav-icon">⚙️</span>Settings</a>
+        </nav>
+        <button id="logoutBtn" class="logout-btn" style="margin: 24px 0 0 0; width: 90%; display: block; background: #e53935; color: #fff; font-weight: bold; border: none; border-radius: 6px; padding: 12px 0; cursor: pointer;">Log Out</button>
+    </div>
+    <div class="content">
+        <div class="page">
+            <div class="card manage-accounts-card">
+                <h1 class="page-title"><span class="title-icon">👥</span>Manage Accounts</h1>
+                <div id="account-stats" class="account-stats"></div>
+                <div class="user-search-bar-container">
+                    <input type="text" id="user-search-bar" class="user-search-bar" placeholder="Search by name..." />
+                </div>
+                <div class="user-table-container"><div class="loading-users">Loading users...</div></div>
+            </div>
+        </div>
+        <!-- User View Modal -->
+        <div id="view-user-modal-backdrop" class="modal-backdrop" style="display:none;"></div>
+        <div id="view-user-modal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <button class="close-btn" id="close-view-user-modal">&times;</button>
+                <h2 style="color:#2563eb;margin-top:0;">User Details</h2>
+                <div id="view-user-details"></div>
+            </div>
+        </div>
+    </div>
+    <script src="scripts.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAccountStats();
+        loadUsersTable();
+        // Modal close logic
+        document.getElementById('close-view-user-modal').onclick = closeViewUserModal;
+        document.getElementById('view-user-modal-backdrop').onclick = closeViewUserModal;
+    });
+    function openViewUserModal(user) {
+        const modal = document.getElementById('view-user-modal');
+        const backdrop = document.getElementById('view-user-modal-backdrop');
+        const details = document.getElementById('view-user-details');
+        details.innerHTML = `
+            <div class="user-detail-row"><span class="user-detail-label">Name:</span><span class="user-detail-value">${user.name || ''}</span></div>
+            <div class="user-detail-row"><span class="user-detail-label">Email:</span><span class="user-detail-value">${user.email || ''}</span></div>
+            <div class="user-detail-row"><span class="user-detail-label">Date of Birth:</span><span class="user-detail-value">${user.dob || '-'}</span></div>
+            <div class="user-detail-row"><span class="user-detail-label">Phone Number:</span><span class="user-detail-value">${user.phone_number || '-'}</span></div>
+            <div class="user-detail-row"><span class="user-detail-label">Sex:</span><span class="user-detail-value">${user.sex || '-'}</span></div>
+            <div class="user-detail-row"><span class="user-detail-label">AIMS Number:</span><span class="user-detail-value">${user.aims_number || '-'}</span></div>
+            <div class="user-detail-row"><span class="user-detail-label">Role:</span><span class="user-detail-value">${user.role || ''}</span></div>
+            <div class="user-detail-row"><span class="user-detail-label">Assigned:</span><span class="user-detail-value">${[user.circuit_name ? 'Circuit: '+user.circuit_name : '', user.zone_name ? 'Zone: '+user.zone_name : '', user.region_name ? 'Region: '+user.region_name : ''].filter(Boolean).join(', ') || '-'}</span></div>
+        `;
+        modal.style.display = 'flex';
+        backdrop.style.display = 'block';
+    }
+    function closeViewUserModal() {
+        document.getElementById('view-user-modal').style.display = 'none';
+        document.getElementById('view-user-modal-backdrop').style.display = 'none';
+    }
+    async function loadAccountStats() {
+        const statsDiv = document.getElementById('account-stats');
+        statsDiv.innerHTML = 'Loading account stats...';
+        try {
+            const res = await fetch('http://localhost:3000/api/account-stats');
+            const stats = await res.json();
+            statsDiv.innerHTML = `
+                <div class="account-stats">
+                    <div class="account-stats-card total"><div class="stat-label">Total Accounts</div><div class="stat-value">${stats.total}</div></div>
+                    <div class="account-stats-card"><div class="stat-label">Circuits Accounts</div><div class="stat-value">${stats.circuit}</div></div>
+                    <div class="account-stats-card"><div class="stat-label">Zonal Accounts</div><div class="stat-value">${stats.zonal}</div></div>
+                    <div class="account-stats-card"><div class="stat-label">Regional Accounts</div><div class="stat-value">${stats.regional}</div></div>
+                    <div class="account-stats-card"><div class="stat-label">National Accounts</div><div class="stat-value">${stats.national}</div></div>
+                </div>
+            `;
+        } catch (err) {
+            statsDiv.innerHTML = '<span style="color:#c62828">Failed to load account stats.</span>';
+        }
+    }
+    async function loadUsersTable() {
+        const container = document.querySelector('.user-table-container');
+        const searchInput = document.getElementById('user-search-bar');
+        fetch('http://localhost:3000/api/users')
+            .then(res => res.json())
+            .then(users => {
+                if (!Array.isArray(users) || users.length === 0) {
+                    container.innerHTML = '<div class="no-users">No users found.</div>';
+                    return;
+                }
+                let filteredUsers = users;
+                function renderTable() {
+                    let table = `<table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Created At</th>
+                                <th>ASSIGNED TO</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    `;
+                    filteredUsers.forEach(user => {
+                        let assigned = [];
+                        if (user.circuit_name) assigned.push(`Circuit: ${user.circuit_name}`);
+                        if (user.zone_name) assigned.push(`Zone: ${user.zone_name}`);
+                        if (user.region_name) assigned.push(`Region: ${user.region_name}`);
+                        let assignedStr = assigned.length ? assigned.join(', ') : '-';
+                        table += `<tr>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.role}</td>
+                            <td>${new Date(user.created_at).toLocaleString()}</td>
+                            <td>${assignedStr}</td>
+                            <td>
+                                <button class="view-btn" data-id="${user.id}">About</button>
+                                <button class="assign-btn" data-id="${user.id}">Assign</button>
+                            </td>
+                        </tr>`;
+                    });
+                    table += '</tbody></table>';
+                    container.innerHTML = table;
+                    // Add event listeners for view/assign
+                    container.querySelectorAll('.view-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const userId = this.getAttribute('data-id');
+                            const user = filteredUsers.find(u => u.id == userId);
+                            if (!user) return;
+                            openViewUserModal(user);
+                        });
+                    });
+                    container.querySelectorAll('.assign-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const userId = this.getAttribute('data-id');
+                            const user = filteredUsers.find(u => u.id == userId);
+                            if (!user) return;
+                            alert('Assign user functionality coming soon!');
+                        });
+                    });
+                }
+                renderTable();
+                searchInput.addEventListener('input', function() {
+                    const val = this.value.toLowerCase();
+                    filteredUsers = users.filter(u => u.name.toLowerCase().includes(val));
+                    renderTable();
+                });
+            })
+            .catch(() => {
+                container.innerHTML = '<div class="error-users">Failed to load users.</div>';
+            });
+    }
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.removeItem('user');
+      window.location.href = '../login.html';
+    };
+    </script>
+</body>
+</html> 

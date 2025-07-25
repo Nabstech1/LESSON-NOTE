@@ -7,9 +7,57 @@
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="admin-styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+.context-section {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.context-section label {
+  min-width: 60px;
+  margin-bottom: 0;
+}
+.context-section input[type="date"],
+.context-section select {
+  min-width: 180px;
+  max-width: 220px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1.5px solid #e57373;
+  font-size: 1em;
+}
+    .my-table th.actions-col, .my-table td.actions-col {
+        min-width: 140px;
+        width: 140px;
+        text-align: left;
+    }
+    .action-btn {
+        display: inline-block;
+        margin: 0 2px 0 0;
+        vertical-align: middle;
+        min-width: 48px;
+        padding: 4px 10px;
+        font-size: 0.98em;
+        border-radius: 5px;
+    }
+    .view-btn.action-btn, .edit-btn.action-btn {
+        width: auto;
+        min-width: 48px;
+        padding: 4px 10px;
+        font-size: 0.98em;
+    }
+    .forward-btn.action-btn {
+        width: auto;
+        min-width: 36px;
+        padding: 4px 6px;
+        font-size: 0.98em;
+    }
+</style>
 </head>
 <body>
     <div class="sidebar">
+        <img src="../loggg.jpeg" alt="Logo" class="home-logo" style="display:block;margin:0 auto 16px auto;max-width:120px;">
         <h2>Admin Dashboard</h2>
         <nav class="sidebar-nav">
             <a href="index.html" class="nav-link">
@@ -24,11 +72,16 @@
                 <span class="nav-icon">📝</span>
                 Review Activities
             </a>
+            <a href="submission-history.html" class="nav-link">
+                <span class="nav-icon">🕓</span>
+                Submission History
+            </a>
             <a href="settings.html" class="nav-link">
                 <span class="nav-icon">⚙️</span>
                 Settings
             </a>
         </nav>
+        <button id="logoutBtn" class="logout-btn" style="margin: 24px 0 0 0; width: 90%; display: block; background: #e53935; color: #fff; font-weight: bold; border: none; border-radius: 6px; padding: 12px 0; cursor: pointer;">Log Out</button>
     </div>
 
     <div class="content">
@@ -39,39 +92,23 @@
                     Review Weekly Activities
                 </h1>
             </div>
+            <div id="forward-success-message" style="display:none;color:#388e3c;background:#e8f5e9;padding:10px 18px;border-radius:6px;margin-bottom:18px;font-weight:600;text-align:center;"></div>
 
-            <!-- Filters -->
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="class-filter">Class:</label>
-                    <select id="class-filter" class="filter-select">
-                        <option value="">All Classes</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="section-filter">Section:</label>
-                    <select id="section-filter" class="filter-select">
-                        <option value="">All Sections</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="day-filter">Day:</label>
-                    <select id="day-filter" class="filter-select">
-                        <option value="">All Days</option>
-                        <option value="Monday">Monday</option>
-                        <option value="Tuesday">Tuesday</option>
-                        <option value="Wednesday">Wednesday</option>
-                        <option value="Thursday">Thursday</option>
-                        <option value="Friday">Friday</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="status-filter">Status:</label>
-                    <select id="status-filter" class="filter-select">
-                        <option value="">All Status</option>
-                        <option value="pending">Pending Review</option>
-                        <option value="reviewed">Reviewed</option>
-                    </select>
+            <!-- Context Fields -->
+            <div class="context-section">
+                <div class="assignment-info" style="background: #f8fafc; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 20px 32px; margin-bottom: 24px; display: flex; gap: 40px; align-items: flex-end; max-width: 700px;">
+                    <div style="display: flex; flex-direction: column; min-width: 180px;">
+                        <label style="font-weight: 600; color: #2563eb; font-size: 1.08em; margin-bottom: 4px;">Region</label>
+                        <input type="text" id="region-display" readonly style="background:#f3f3f3; border: 1px solid #d1d5db; border-radius: 6px; min-width: 160px; font-size: 1.08em; padding: 7px 10px; color: #222; font-weight: 500;" />
+                    </div>
+                    <div style="display: flex; flex-direction: column; min-width: 180px;">
+                        <label style="font-weight: 600; color: #2563eb; font-size: 1.08em; margin-bottom: 4px;">Zone</label>
+                        <input type="text" id="zone-display" readonly style="background:#f3f3f3; border: 1px solid #d1d5db; border-radius: 6px; min-width: 160px; font-size: 1.08em; padding: 7px 10px; color: #222; font-weight: 500;" />
+                    </div>
+                    <div style="display: flex; flex-direction: column; min-width: 180px;">
+                        <label style="font-weight: 600; color: #2563eb; font-size: 1.08em; margin-bottom: 4px;">Date of Forwarding</label>
+                        <input type="date" id="forward-date" style="background:#f3f3f3; border: 1px solid #d1d5db; border-radius: 6px; min-width: 160px; font-size: 1.08em; padding: 7px 10px; color: #222; font-weight: 500;" />
+                    </div>
                 </div>
             </div>
 
@@ -97,13 +134,11 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>Day</th>
-                                <th>Class</th>
-                                <th>Section</th>
-                                <th>Topic</th>
-                                <th>R.P.K</th>
+                                <th><input type="checkbox" id="select-all-checkbox"></th>
+                                <th>Date</th>
+                                <th>Circuit</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                <th class="actions-col">Action</th>
                             </tr>
                         </thead>
                         <tbody id="activities-table-body">
@@ -181,7 +216,424 @@
         </div>
     </div>
 
+    <div id="filter-panel" class="filter-panel" style="display:none; position:absolute; right:32px; top:80px; background:#fff; border:1.5px solid #e57373; border-radius:8px; box-shadow:0 4px 24px #0001; padding:18px 22px; z-index:1002; min-width:320px;">
+        <button id="close-filter-btn" style="position:absolute;top:8px;right:12px;font-size:1.3em;background:none;border:none;color:#b71c1c;cursor:pointer;">&times;</button>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            <!-- ... existing filter fields ... -->
+        </div>
+    </div>
+
+    <!-- Profile Icon Button -->
+    <button class="profile-icon-btn" id="profileIconBtn" title="Profile">
+      <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#2563eb"/></svg>
+    </button>
+    <!-- Profile Modal Backdrop and Modal -->
+    <div class="profile-modal-backdrop" id="profileModalBackdrop"></div>
+    <div class="profile-modal" id="profileModal" style="display:none;">
+      <button class="close-profile-modal" id="closeProfileModal">&times;</button>
+      <div class="profile-avatar">
+        <svg viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="32" fill="#e3eaff"/><path d="M32 34c6.627 0 12-5.373 12-12S38.627 10 32 10 20 15.373 20 22s5.373 12 12 12zm0 4c-8.837 0-16 7.163-16 16v2h32v-2c0-8.837-7.163-16-16-16z" fill="#fff"/></svg>
+      </div>
+      <div class="profile-btn-row">
+        <button id="editProfileBtn">EDIT</button>
+        <button id="changePassBtn">PASS</button>
+      </div>
+      <button class="logout-btn" id="logoutBtn">LOG OUT</button>
+    </div>
+
+    <!-- Profile Edit Modal Backdrop and Modal -->
+    <div class="profile-edit-modal-backdrop" id="profileEditModalBackdrop"></div>
+    <div class="profile-edit-modal" id="profileEditModal" style="display:none;">
+      <button class="close-edit-modal" id="closeEditModal">&times;</button>
+      <h2>Edit Profile</h2>
+      <form id="profileEditForm">
+        <div class="form-group">
+          <label for="editDob">Date of Birth</label>
+          <input type="date" id="editDob" name="dob" />
+        </div>
+        <div class="form-group">
+          <label for="editPhone">Phone Number</label>
+          <input type="text" id="editPhone" name="phone_number" maxlength="30" />
+        </div>
+        <div class="form-group">
+          <label for="editSex">Sex</label>
+          <select id="editSex" name="sex">
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editAims">AIMS Number</label>
+          <input type="text" id="editAims" name="aims_number" maxlength="50" />
+        </div>
+        <div class="modal-btn-row">
+          <button type="button" id="cancelEditBtn">Cancel</button>
+          <button type="submit" id="saveEditBtn">Save</button>
+        </div>
+        <div class="status-message" id="editStatusMsg"></div>
+      </form>
+    </div>
+
+    <!-- Add a div for success message near the top of the content -->
+    <div id="forward-success-message" style="display:none;color:#388e3c;background:#e8f5e9;padding:10px 18px;border-radius:6px;margin-bottom:18px;font-weight:600;text-align:center;"></div>
+
     <script src="../api.js"></script>
     <script src="admin.js"></script>
+    <script>
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    if (!user) {
+      window.location.href = '../login.html';
+    }
+    // Fix: Only add event listeners if the elements exist
+    var filterToggleBtn = document.getElementById('filter-toggle-btn');
+    if (filterToggleBtn) {
+        filterToggleBtn.onclick = function() {
+            const panel = document.getElementById('filter-panel');
+            panel.style.display = (panel.style.display === 'none' || !panel.style.display) ? 'block' : 'none';
+        };
+    }
+    var closeFilterBtn = document.getElementById('close-filter-btn');
+    if (closeFilterBtn) {
+        closeFilterBtn.onclick = function() {
+            document.getElementById('filter-panel').style.display = 'none';
+        };
+    }
+    var applyFilterBtn = document.getElementById('apply-filter-btn');
+    if (applyFilterBtn) {
+        applyFilterBtn.onclick = function() {
+            const status = document.getElementById('filter-status').value;
+            const dateStart = document.getElementById('filter-date-start').value;
+            const dateEnd = document.getElementById('filter-date-end').value;
+            const region = document.getElementById('filter-region').value;
+            const zone = document.getElementById('filter-zone').value;
+            const circuit = document.getElementById('filter-circuit').value;
+            // Filter table rows based on selected filters
+            const rows = document.querySelectorAll('.my-table tbody tr');
+            rows.forEach(row => {
+                let show = true;
+                if (status) {
+                    const statusCell = row.querySelector('.status-cell');
+                    if (statusCell && statusCell.textContent.trim() !== status) show = false;
+                }
+                if (dateStart) {
+                    const dateCell = row.children[1];
+                    if (dateCell && new Date(dateCell.textContent) < new Date(dateStart)) show = false;
+                }
+                if (dateEnd) {
+                    const dateCell = row.children[1];
+                    if (dateCell && new Date(dateCell.textContent) > new Date(dateEnd)) show = false;
+                }
+                if (region) {
+                    const regionCell = row.getAttribute('data-region-id');
+                    if (regionCell && regionCell !== region) show = false;
+                }
+                if (zone) {
+                    const zoneCell = row.getAttribute('data-zone-id');
+                    if (zoneCell && zoneCell !== zone) show = false;
+                }
+                if (circuit) {
+                    const circuitCell = row.getAttribute('data-circuit-id');
+                    if (circuitCell && circuitCell !== circuit) show = false;
+                }
+                row.style.display = show ? '' : 'none';
+            });
+            document.getElementById('filter-panel').style.display = 'none';
+        };
+    }
+    // Get user from localStorage
+    let regions = [], zones = [];
+    async function fetchRegionsZones() {
+        const [r, z] = await Promise.all([
+            fetch('http://localhost:3000/api/regions').then(r => r.json()),
+            fetch('http://localhost:3000/api/zones').then(r => r.json())
+        ]);
+        regions = r; zones = z;
+        populateRegionDropdown();
+    }
+    function populateRegionDropdown() {
+        const regionSelect = document.getElementById('region-context'); // Changed from region-filter to region-context
+        regionSelect.innerHTML = '<option value="">Select Region</option>' +
+            regions.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+        regionSelect.onchange = function() {
+            populateZoneDropdown(this.value);
+        };
+    }
+    function populateZoneDropdown(regionId) {
+        const zoneSelect = document.getElementById('zone-context'); // Changed from zone-filter to zone-context
+        zoneSelect.innerHTML = '<option value="">Select Zone</option>' +
+            zones.filter(z => z.region_id == regionId).map(z => `<option value="${z.id}">${z.name}</option>`).join('');
+    }
+    fetchRegionsZones();
+    // TODO: Update filtering logic to use date, region, and zone
+
+async function fetchActivities() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    let url = 'http://localhost:3000/api/questionnaire-responses?type=activity&stage=admin';
+    if (user && user.zone_id) url += `&zone_id=${user.zone_id}`;
+    const res = await fetch(url);
+    return await res.json();
+}
+function openModal(answers) {
+    let parsedAnswers = answers;
+    if (typeof answers === 'string') {
+        try {
+            parsedAnswers = JSON.parse(answers);
+        } catch (e) {
+            parsedAnswers = {};
+        }
+    }
+    // You can implement a modal rendering function here if needed
+    // For now, just alert the JSON
+    alert(JSON.stringify(parsedAnswers, null, 2));
+}
+function closeModal() {
+    document.getElementById('review-modal').style.display = 'none';
+}
+async function loadActivities() {
+    const activities = await fetchActivities();
+    // Sort by submitted_at (or id) descending so newest is first
+    activities.sort((a, b) => {
+        const dateA = a.submitted_at ? new Date(a.submitted_at) : new Date(0);
+        const dateB = b.submitted_at ? new Date(b.submitted_at) : new Date(0);
+        if (dateA.getTime() !== dateB.getTime()) {
+            return dateB - dateA; // Most recent first
+        }
+        return (b.id || 0) - (a.id || 0); // Fallback to id
+    });
+    const tbody = document.getElementById('activities-table-body');
+    tbody.innerHTML = '';
+    activities.forEach(activity => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="checkbox" class="row-checkbox" data-id="${activity.id}"></td>
+            <td>${activity.submitted_at ? new Date(activity.submitted_at).toLocaleDateString() : ''}</td>
+            <td>${activity.circuit_name || ''}</td>
+            <td class="status-cell">${activity.status === 'READ' ? 'READ' : 'UNREAD'}</td>
+            <td class="actions-col"></td>
+        `;
+        const actionCell = tr.querySelector('td.actions-col');
+        // Create and append only one set of buttons
+        const viewBtn = document.createElement('button');
+        viewBtn.className = 'view-btn action-btn';
+        viewBtn.textContent = 'View';
+        viewBtn.onclick = () => openModal(activity.answers);
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn action-btn';
+        editBtn.style.background = '#f59e42';
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = () => {/* Implement edit logic if needed */};
+        const forwardBtn = document.createElement('button');
+        forwardBtn.className = 'forward-btn action-btn';
+        forwardBtn.style.background = '#4caf50';
+        forwardBtn.textContent = 'SEND';
+        forwardBtn.onclick = () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const submitted_by = user ? user.id : null;
+            const forwardDate = document.getElementById('forward-date').value;
+            const region_id = user ? user.region_id : null;
+            const zone_id = user ? user.zone_id : null;
+            if (!forwardDate) {
+                alert('Please select the Date of Forwarding before sending reports.');
+                return;
+            }
+            const payload = { id: activity.id, stage: 'regional', submitted_by, zonal_forward_date: forwardDate, region_id, zone_id };
+            fetch('http://localhost:3000/api/questionnaire-responses', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (response.ok && data.success) {
+                    alert('Activity forwarded to Regional Level.');
+                    loadActivities();
+                    document.getElementById('forward-success-message').textContent = 'Report forwarded successfully!';
+                    document.getElementById('forward-success-message').style.display = 'block';
+                    setTimeout(() => { document.getElementById('forward-success-message').style.display = 'none'; }, 2500);
+                } else {
+                    alert(data.error || 'Failed to forward activity.');
+                }
+            })
+            .catch(err => {
+                alert('Server error. Please try again.');
+                console.error(err);
+            });
+        };
+        const checkBtn = document.createElement('button');
+        checkBtn.className = 'check-btn action-btn';
+        checkBtn.style.background = '#2196f3';
+        checkBtn.style.fontWeight = 'bold';
+        checkBtn.title = 'Toggle Read/Unread';
+        checkBtn.textContent = activity.status === 'READ' ? 'UNREAD' : 'READ';
+        checkBtn.onclick = () => {
+            // Toggle status visually
+            const statusCell = tr.querySelector('.status-cell');
+            if (checkBtn.textContent === 'READ') {
+                checkBtn.textContent = 'UNREAD';
+                statusCell.textContent = 'READ';
+            } else {
+                checkBtn.textContent = 'READ';
+                statusCell.textContent = 'UNREAD';
+            }
+            // Optionally, send update to backend here
+        };
+        actionCell.appendChild(viewBtn);
+        actionCell.appendChild(editBtn);
+        actionCell.appendChild(forwardBtn);
+        actionCell.appendChild(checkBtn);
+        tbody.appendChild(tr);
+    });
+}
+document.addEventListener('DOMContentLoaded', async function() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    // Fetch all regions and zones
+    const [regions, zones] = await Promise.all([
+        fetch('http://localhost:3000/api/regions').then(r => r.json()),
+        fetch('http://localhost:3000/api/zones').then(r => r.json())
+    ]);
+    // Debug logging
+    console.log('user', user);
+    console.log('regions', regions);
+    console.log('zones', zones);
+    console.log('region_id', user && user.region_id, 'zone_id', user && user.zone_id);
+    function findName(arr, id) {
+        if (!id) return '';
+        const item = arr.find(x => String(x.id) === String(id));
+        if (!item) return '(Unassigned)';
+        return item.name;
+    }
+    document.getElementById('region-display').value = findName(regions, user && user.region_id);
+    document.getElementById('zone-display').value = findName(zones, user && user.zone_id);
+    loadActivities();
+});
+    // Fix: Only add event listener if the element exists
+    var searchBar = document.getElementById('search-bar');
+    if (searchBar) {
+        searchBar.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            document.querySelectorAll('#activities-table-body tr').forEach(row => {
+                // Circuit is the 3rd column (index 2)
+                const circuitCell = row.children[2];
+                row.style.display = circuitCell && circuitCell.textContent.toLowerCase().includes(query) ? '' : 'none';
+            });
+        });
+    }
+    </script>
+    <script>
+    // Profile Modal Logic
+    const profileIconBtn = document.getElementById('profileIconBtn');
+    const profileModal = document.getElementById('profileModal');
+    const profileModalBackdrop = document.getElementById('profileModalBackdrop');
+    const closeProfileModal = document.getElementById('closeProfileModal');
+    profileIconBtn.onclick = () => {
+      profileModal.style.display = 'flex';
+      profileModalBackdrop.style.display = 'block';
+    };
+    profileModalBackdrop.onclick = closeProfileModal.onclick = () => {
+      profileModal.style.display = 'none';
+      profileModalBackdrop.style.display = 'none';
+    };
+    document.getElementById('logoutBtn').onclick = function() {
+      localStorage.removeItem('user');
+      window.location.href = '../login.html';
+    };
+    document.getElementById('editProfileBtn').onclick = function() {
+      alert('Edit profile functionality coming soon!');
+    };
+    document.getElementById('changePassBtn').onclick = function() {
+      document.getElementById('profileModal').style.display = 'none';
+      document.getElementById('profilePassModal').style.display = 'flex';
+      document.getElementById('profilePassModalBackdrop').style.display = 'block';
+    };
+    </script>
+    <script>
+    // Profile Edit Modal Logic
+    const profileEditModal = document.getElementById('profileEditModal');
+    const profileEditModalBackdrop = document.getElementById('profileEditModalBackdrop');
+    const closeEditModal = document.getElementById('closeEditModal');
+    const editProfileBtn = document.getElementById('editProfileBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const profileEditForm = document.getElementById('profileEditForm');
+    const editStatusMsg = document.getElementById('editStatusMsg');
+
+    function openProfileEditModal() {
+      // Get user from localStorage
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      document.getElementById('editDob').value = user.dob || '';
+      document.getElementById('editPhone').value = user.phone_number || '';
+      document.getElementById('editSex').value = user.sex || '';
+      document.getElementById('editAims').value = user.aims_number || '';
+      editStatusMsg.textContent = '';
+      profileEditModal.style.display = 'flex';
+      profileEditModalBackdrop.style.display = 'block';
+    }
+    function closeProfileEditModal() {
+      profileEditModal.style.display = 'none';
+      profileEditModalBackdrop.style.display = 'none';
+    }
+    editProfileBtn.onclick = openProfileEditModal;
+    closeEditModal.onclick = closeProfileEditModal;
+    profileEditModalBackdrop.onclick = closeProfileEditModal;
+    cancelEditBtn.onclick = closeProfileEditModal;
+    profileEditForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const dob = document.getElementById('editDob').value;
+      const phone_number = document.getElementById('editPhone').value.trim();
+      const sex = document.getElementById('editSex').value;
+      const aims_number = document.getElementById('editAims').value.trim();
+      editStatusMsg.textContent = '';
+      try {
+        const res = await fetch(`http://localhost:3000/api/users/${user.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dob, phone_number, sex, aims_number })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          // Update localStorage user
+          user.dob = dob;
+          user.phone_number = phone_number;
+          user.sex = sex;
+          user.aims_number = aims_number;
+          localStorage.setItem('user', JSON.stringify(user));
+          editStatusMsg.textContent = 'Profile updated!';
+          setTimeout(closeProfileEditModal, 1000);
+        } else {
+          editStatusMsg.textContent = data.error || 'Failed to update profile.';
+        }
+      } catch (err) {
+        editStatusMsg.textContent = 'Server error. Please try again.';
+      }
+    };
+    </script>
+    <script>
+        // Placeholder for forwarding selected
+        window.forwardSelectedReports = async function(ids) {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const submitted_by = user ? user.id : null;
+            const forwardDate = document.getElementById('forward-date').value;
+            const region_id = user ? user.region_id : null;
+            const zone_id = user ? user.zone_id : null;
+            if (!forwardDate) {
+                alert('Please select the Date of Forwarding before sending reports.');
+                return;
+            }
+            for (const id of ids) {
+                await fetch('http://localhost:3000/api/questionnaire-responses', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, stage: 'regional', submitted_by, zonal_forward_date: forwardDate, region_id, zone_id })
+                });
+            }
+            alert('Forwarded selected activities to Regional Level.');
+            loadActivities();
+            document.getElementById('forward-success-message').textContent = 'Report forwarded successfully!';
+            document.getElementById('forward-success-message').style.display = 'block';
+            setTimeout(() => { document.getElementById('forward-success-message').style.display = 'none'; }, 2500);
+        };
+    </script>
 </body>
 </html> 

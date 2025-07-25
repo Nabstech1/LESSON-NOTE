@@ -842,3 +842,211 @@ table tr:hover {
         padding: 20px;
     }
 } 
+
+.home-logo {
+    display: block;
+    margin: 0 auto 18px auto;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 2px 8px #0002;
+    background: #fff;
+} 
+
+/* Profile Icon Button */
+.profile-icon-btn {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+}
+.profile-icon-btn img, .profile-icon-btn svg {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e3eaff;
+  border: 2px solid #2563eb;
+}
+
+/* Profile Modal */
+.profile-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 2000;
+  display: none;
+}
+.profile-modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 4px 32px #0002;
+  padding: 36px 32px 28px 32px;
+  min-width: 260px;
+  max-width: 90vw;
+  z-index: 2001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.profile-modal .profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.profile-modal .profile-avatar svg {
+  width: 60px;
+  height: 60px;
+  color: #fff;
+}
+.profile-modal .profile-btn-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.profile-modal .profile-btn-row button {
+  padding: 8px 24px;
+  border: 1.5px solid #2563eb;
+  background: #fff;
+  color: #2563eb;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.profile-modal .profile-btn-row button:hover {
+  background: #2563eb;
+  color: #fff;
+}
+.profile-modal .logout-btn {
+  width: 100%;
+  background: #7bb6e9;
+  color: #1741a6;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.profile-modal .logout-btn:hover {
+  background: #2563eb;
+  color: #fff;
+}
+.profile-modal .close-profile-modal {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  color: #888;
+  cursor: pointer;
+} 
+
+/* Profile Edit Modal */
+.profile-edit-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 2100;
+  display: none;
+}
+.profile-edit-modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 4px 32px #0002;
+  padding: 36px 32px 28px 32px;
+  min-width: 320px;
+  max-width: 95vw;
+  z-index: 2101;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.profile-edit-modal h2 {
+  color: #2563eb;
+  margin-bottom: 18px;
+}
+.profile-edit-modal .form-group {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.profile-edit-modal label {
+  display: block;
+  margin-bottom: 6px;
+  color: #2563eb;
+  font-weight: 500;
+}
+.profile-edit-modal input,
+.profile-edit-modal select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1.5px solid #e57373;
+  border-radius: 6px;
+  font-size: 1em;
+  background: #fbe9e7;
+  margin-bottom: 2px;
+}
+.profile-edit-modal input:focus,
+.profile-edit-modal select:focus {
+  border: 1.5px solid #2563eb;
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 2px #2563eb22;
+}
+.profile-edit-modal .modal-btn-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  width: 100%;
+  justify-content: flex-end;
+}
+.profile-edit-modal .modal-btn-row button {
+  padding: 8px 24px;
+  border: 1.5px solid #2563eb;
+  background: #fff;
+  color: #2563eb;
+  border-radius: 6px;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.profile-edit-modal .modal-btn-row button:hover {
+  background: #2563eb;
+  color: #fff;
+}
+.profile-edit-modal .close-edit-modal {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  color: #888;
+  cursor: pointer;
+}
+.profile-edit-modal .status-message {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 500;
+  color: #2563eb;
+} 

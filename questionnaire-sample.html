@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Questionnaire Sample</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f7fafc; margin: 0; padding: 0; }
+        .container { max-width: 900px; margin: 32px auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 32px; }
+        h1 { text-align: center; margin-bottom: 32px; }
+        .accordion { border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 18px; background: #f9fafb; }
+        .accordion-header { cursor: pointer; padding: 16px 20px; font-size: 1.1rem; font-weight: 600; background: #e0e7ef; border-radius: 6px 6px 0 0; display: flex; align-items: center; }
+        .accordion-header span { margin-left: auto; font-size: 1.2em; }
+        .accordion-content { display: none; padding: 20px; border-top: 1px solid #e2e8f0; }
+        .accordion.open .accordion-content { display: block; }
+        .question-group { margin-bottom: 18px; }
+        .question-label { font-weight: 500; margin-bottom: 6px; display: block; }
+        .subfields-row { display: flex; gap: 12px; margin-bottom: 8px; }
+        .subfields-row label { font-size: 0.97em; margin-right: 4px; }
+        input[type="text"], input[type="number"], input[type="date"], textarea {
+            padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 1em; width: 180px; }
+        textarea { min-height: 32px; resize: vertical; }
+        .submit-btn { margin: 32px auto 0 auto; display: block; background: #2563eb; color: #fff; border: none; border-radius: 5px; padding: 12px 36px; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .submit-btn:hover { background: #1741a6; }
+        .json-output { background: #f3f4f6; border-radius: 6px; padding: 18px; margin-top: 32px; font-family: 'Consolas', monospace; font-size: 1em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teacher Questionnaire (Sample)</h1>
+        <form id="questionnaire-form">
+            <div id="questionnaire-sections"></div>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+        <div id="json-output" class="json-output" style="display:none;"></div>
+    </div>
+    <script src="questionnaire.js"></script>
+</body>
+</html> 
